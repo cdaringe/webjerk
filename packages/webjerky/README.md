@@ -7,6 +7,7 @@ webjerky is a tiny script that wires together a few webjerk plugins.  it runs el
 specifically, it:
 
 - generates snaps from [webjerk-snaps](../webjerky-snap),
+  - by default, 'jerky looks for sauce creds, but you can test against a local selenium instance by passing `conf.localSelenium` or `WEBJERKY_LOCAL=true`
 - compares test snaps from reference snaps with [webjerk-image-set-diff](../webjerk-image-set-diff)
   - see ^^ docs to see how to use the comparison algorithm, approve new images, etc
 - creates reports from [webjerk-image-set-diff-reporter](../webjerk-image-set-diff-reporter) when differences detected

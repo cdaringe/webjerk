@@ -81,9 +81,7 @@ tape('case-missing-run-img', t => {
   var refDir = path.join(testRoot, 'ref')
   var runDir = path.join(testRoot, 'run')
   var diffDir = `${runDir}-diff`
-  var idr = new ImageSetDiffer({ refDir, runDir })
-  return Promise.resolve()
-  .then(() => idr.run())
+  return ImageSetDiffer.factory({ refDir, runDir }).run()
   .catch(err => {
     t.equals(err.code, 'EMISSINGIMAGES', 'missing images detected')
   })

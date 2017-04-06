@@ -282,7 +282,7 @@ async@0.1.15:
   version "0.1.15"
   resolved "https://registry.yarnpkg.com/async/-/async-0.1.15.tgz#2180eaca2cf2a6ca5280d41c0585bec9b3e49bd3"
 
-async@2.1.2, async@^2.1.2:
+async@2.1.2, async@^2.0.1, async@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/async/-/async-2.1.2.tgz#612a4ab45ef42a70cde806bad86ee6db047e8385"
   dependencies:
@@ -296,7 +296,7 @@ async@^1.3.0, async@^1.4.0, async@^1.5.0:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.0.1, async@^2.1.4:
+async@^2.1.4:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.3.0.tgz#1013d1051047dd320fe24e494d5c66ecaf6147d9"
   dependencies:
@@ -1030,13 +1030,7 @@ binary-extensions@^1.0.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.8.0.tgz#48ec8d16df4377eae5fa5884682480af4d95c774"
 
-bl@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/bl/-/bl-1.2.0.tgz#1397e7ec42c5f5dc387470c500e34a9f6be9ea98"
-  dependencies:
-    readable-stream "^2.0.5"
-
-bl@~1.1.2:
+bl@^1.0.0, bl@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/bl/-/bl-1.1.2.tgz#fdca871a99713aa00d19e3bbba41c44787a65398"
   dependencies:
@@ -3096,11 +3090,11 @@ got@^6.7.1:
     unzip-response "^2.0.1"
     url-parse-lax "^1.0.0"
 
-graceful-fs@4.1.10, graceful-fs@^4.1.2, graceful-fs@^4.1.9:
+graceful-fs@4.1.10, graceful-fs@^4.1.9:
   version "4.1.10"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.10.tgz#f2d720c22092f743228775c75e3612632501f131"
 
-graceful-fs@^4.1.0, graceful-fs@^4.1.11, graceful-fs@^4.1.6, graceful-fs@~4.1.11:
+graceful-fs@^4.1.0, graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@~4.1.11:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
@@ -4499,17 +4493,17 @@ mime-types@^2.1.11, mime-types@^2.1.12, mime-types@~2.1.11, mime-types@~2.1.15, 
   dependencies:
     mime-db "~1.27.0"
 
-mime@1.2.6, mime@1.2.x:
+mime@1.2.6:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.2.6.tgz#b1f86c768c025fa87b48075f1709f28aeaf20365"
+
+mime@1.2.x, mime@~1.2.9:
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-1.2.11.tgz#58203eed86e3a5ef17aed2b7d9ebd47f0a60dd10"
 
 mime@1.3.4, mime@^1.2.11, mime@^1.3.4:
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.3.4.tgz#115f9e3b6b3daf2959983cb38f149a2d40eb5d53"
-
-mime@~1.2.9:
-  version "1.2.11"
-  resolved "https://registry.yarnpkg.com/mime/-/mime-1.2.11.tgz#58203eed86e3a5ef17aed2b7d9ebd47f0a60dd10"
 
 mimeparse@^0.1.4:
   version "0.1.4"
@@ -7385,9 +7379,9 @@ webidl-conversions@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-4.0.1.tgz#8015a17ab83e7e1b311638486ace81da6ce206a0"
 
-webjerk-image-set-diff-reporter@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/webjerk-image-set-diff-reporter/-/webjerk-image-set-diff-reporter-0.0.3.tgz#7842cc92095ab6489523b629346f26f397ac65ab"
+webjerk-image-set-diff-reporter@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/webjerk-image-set-diff-reporter/-/webjerk-image-set-diff-reporter-0.1.0.tgz#52893683d8ebe49503da7bf40661e71b2bf3838d"
   dependencies:
     axios "^0.16.0"
     bluebird "^3.5.0"
@@ -7398,15 +7392,15 @@ webjerk-image-set-diff-reporter@^0.0.3:
     react-image-diff "^0.1.0"
     react-scripts "0.9.5"
 
-webjerk-image-set-diff@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/webjerk-image-set-diff/-/webjerk-image-set-diff-0.0.5.tgz#f8891143d6dbcc6df2fbfdbf4d9f36790aa9f4dc"
+webjerk-image-set-diff@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/webjerk-image-set-diff/-/webjerk-image-set-diff-0.1.0.tgz#6714d0c78c7a1a2e73691f857acf5f2e59f21607"
   dependencies:
     blink-diff "^1.0.13"
     bluebird "^3.5.0"
     fs-extra "^2.1.2"
     lodash "^4.17.4"
-    webjerk-image-set-diff-reporter "^0.0.3"
+    webjerk-image-set-diff-reporter "^0.1.0"
 
 webjerk-process-wrangler@^0.0.6:
   version "0.0.6"

@@ -1,7 +1,7 @@
 {
   "name": "webjerk-snaps",
   "description": "use CSS screenshot testing in webjerk",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "main": "src/index.js",
   "license": "MIT",
   "author": "cdaringe",
@@ -22,7 +22,7 @@
     "resolve-jsdoc-bin": "^1.0.0",
     "ripcord": "1.2.4",
     "tape": "^4.6.3",
-    "webjerk": "^0.1.13",
+    "webjerk": "^0.1.14",
     "webjerk-process-wrangler": "^0.0.6"
   },
   "scripts": {

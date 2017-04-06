@@ -1,8 +1,17 @@
 # webjerky
 
-connect to sauce, fire up a static server, do some screenshot testing!
+connect to sauce labs, fire up a static server, & do some screenshot testing!
 
-webjerky is a tiny script that wires together a few webjerk plugins, & runs element-wise screenshot testing in saucelabs.  you can read the single file source for a better idea!
+webjerky is a tiny script that wires together a few webjerk plugins.  it runs element-wise screenshot testing in real browsers on saucelabs.  you can read the single file source for a better idea!
+
+specifically, it:
+
+- generates snaps from [webjerky-snaps](../webjerky-snaps),
+- compares test snaps from reference snaps with [webjerk-image-set-diff](../webjerk-image-set-diff)
+  - see ^^ docs to see how to use the comparison algorithm, approve new images, etc
+- creates reports from [webjerk-image-set-diff-reporter](../webjerk-image-set-diff-reporter) when differences detected
+
+<img width="300px" src="https://raw.githubusercontent.com/cdaringe/webjerk-image-set-diff-reporter/master/img/example.gif" />
 
 ## usage
 

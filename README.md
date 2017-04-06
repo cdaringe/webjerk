@@ -10,8 +10,10 @@ webjerk has a 3 phase lifecycle: `pre`, `main`, `post`.
 
 webjerk accepts plugins to register with it, and it runs those plugins.
 
-## what can it do thats cool?
+## what can it do that's cool?
 
-sounds lame.  do can it do anything cool?  no. but its plugins can!
+"this sounds lame. can it do anything cool?"
+
+no. but its plugins can!
 
 see [webjerky](packages/webjerky).

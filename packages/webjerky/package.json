@@ -1,16 +1,16 @@
 {
   "name": "webjerky",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "connect to sauce, fire up a static server, do some screenshot testing!",
   "main": "src/index.js",
   "author": "cdaringe",
   "license": "MIT",
   "dependencies": {
     "httpster": "^1.0.3",
-    "webjerk": "^0.1.1",
+    "webjerk": "^0.1.12",
     "webjerk-process-wrangler": "^0.1.0",
     "webjerk-saucie": "^0.1.0",
-    "webjerk-snaps": "^0.1.10"
+    "webjerk-snaps": "^0.1.12"
   },
   "repository": {
     "type": "git",

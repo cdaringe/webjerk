@@ -1,7 +1,7 @@
 {
   "name": "webjerk",
   "description": "browser test pipelining utilities",
-  "version": "0.1.1",
+  "version": "0.1.12",
   "main": "src/index.js",
   "license": "MIT",
   "devDependencies": {

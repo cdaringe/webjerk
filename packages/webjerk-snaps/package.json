@@ -1,7 +1,7 @@
 {
   "name": "webjerk-snaps",
   "description": "use CSS screenshot testing in webjerk",
-  "version": "0.1.14",
+  "version": "0.2.0",
   "main": "src/index.js",
   "license": "MIT",
   "author": "cdaringe",
@@ -12,7 +12,7 @@
     "wdio-sauce-service": "^0.3.1",
     "wdio-screenshot": "^0.5.2",
     "webdriverio": "4.2.16",
-    "webjerk-image-set-diff": "^0.1.13"
+    "webjerk-image-set-diff": "^0.2.0"
   },
   "devDependencies": {
     "gh-pages": "^0.12.0",

@@ -13,7 +13,7 @@ bb.promisifyAll(fs)
 tape('case-no-dirs', t => {
   t.plan(2)
   try {
-    var x = new ImageSetDiffer()
+    ImageSetDiffer().factory()
   } catch (err) {
     t.ok(err, 'no conf throws')
   }

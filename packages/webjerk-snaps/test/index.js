@@ -1,3 +1,4 @@
+/* eslint-disable semi */
 'use strict'
 
 var wj = require('webjerk')
@@ -39,7 +40,7 @@ tape('drives the browser, takes screenshots, outputs report on fail', t => {
           concurrency: 2,
           url: 'http://localhost:3333', // what page to extract snaps from
           testName: 'screenshot-all-divs',
-          snapDefinitionsFromWindow: function queryDivSnapDefinitions (divs, message) {
+          snapDefinitionsFromWindow: function queryDivSnapDefinitions () {
             // @NOTE this JS is run in the _browser_ context
             // webdriverio JS serialziation requires semis. :/
             var divs = document.getElementsByTagName('div');

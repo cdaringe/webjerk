@@ -57,20 +57,21 @@ module.exports = function (conf) {
               browserName: 'safari',
               tags: ['webjerk-safari'],
               name: conf.testName
-            },
-            {
-              browserName: 'MicrosoftEdge',
-              platform: 'Windows 10',
-              tags: ['webjerk-edge'],
-              name: conf.testName
-            },
-            {
-              browserName: 'internet explorer',
-              platform: 'Windows 10',
-              version: '11.103',
-              tags: ['webjerk-ie'],
-              name: conf.testName
             }
+            // ,
+            // {
+            //   browserName: 'MicrosoftEdge',
+            //   platform: 'Windows 10',
+            //   tags: ['webjerk-edge'],
+            //   name: conf.testName
+            // },
+            // {
+            //   browserName: 'internet explorer',
+            //   platform: 'Windows 10',
+            //   version: '11.103',
+            //   tags: ['webjerk-ie'],
+            //   name: conf.testName
+            // }
           ],
           port: 4445,
           webdriverio: {

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>webjerky - Documentation</title>
+    <title>configuration - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -23,12 +23,12 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-webjerky.html">webjerky</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-webjerk-snaps.html">webjerk-snaps</a><ul class='methods'><li data-type='method'><a href="module-webjerk-snaps.html#~capture">capture</a></li><li data-type='method'><a href="module-webjerk-snaps.html#~main">main</a></li><li data-type='method'><a href="module-webjerk-snaps.html#~post">post</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="configuration.html">configuration</a></li></ul>
 </nav>
 
 <div id="main">
     
-    <h1 class="page-title">webjerky</h1>
+    <h1 class="page-title">configuration</h1>
     
 
     
@@ -40,8 +40,9 @@
 
 <header>
     
-        
-            
+        <h2>
+        configuration
+        </h2>
         
     
 </header>
@@ -52,74 +53,13 @@
         
 
         
-            
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
 
-    <h4 class="name" id="module:webjerky"><span class="type-signature"></span>(require("webjerky"))<span class="signature">(conf)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Webjerky.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>conf</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
+<table class="props">
     <thead>
     <tr>
         
@@ -143,6 +83,38 @@
 
         <tr>
             
+                <td class="name"><code>desiredCapabilities</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+|
+
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>set of selenium desiredCapabilities.  we expect an array, although the similar named property is an object. be concious of this difference!</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>testName</code></td>
             
 
@@ -160,21 +132,19 @@
                 
 
                 
-
-                
                 </td>
             
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>test name.  used in image prefixing for image diffs</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>staticDir</code></td>
+                <td class="name"><code>url</code></td>
             
 
             <td class="type">
@@ -191,80 +161,12 @@
                 
 
                 
-
-                
                 </td>
             
 
             
 
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>sauceUsername</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>defaults to process.env.SAUCE_USERNAME</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>sauceAccessKey</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>defaults to process.env.SAUCE_ACCESS_KEY</p></td>
+            <td class="description last"><p>url for selenium to browse to</p></td>
         </tr>
 
     
@@ -277,7 +179,7 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">function</span>
 
 
             
@@ -286,7 +188,7 @@
             
                 <td class="attributes">
                 
-
+                    &lt;optional><br>
                 
 
                 
@@ -295,7 +197,7 @@
 
             
 
-            <td class="description last"><p>see webjerk-snaps for more</p></td>
+            <td class="description last"><p>POJOs with <code>name</code> &amp; <code>elem</code> keys.  these describe <em>what</em> to snap &amp; compare. See @{link https://github.com/webdriverio/webdrivercss#example}. If you don't know these in advanced, see <code>snapDefinitionsFromWindow</code>.</p></td>
         </tr>
 
     
@@ -321,6 +223,35 @@
                 
 
                 
+                </td>
+            
+
+            
+
+            <td class="description last"><p>code to run in the browser to collect CSS selectors, if desired. Side effects, like modifying DOM, are permitted.  For instance, a side effect is, if you want images of all <div>s, adding unique <code>id</code>s to those nodes. <strong>Must return a set of snapDefinitions</strong>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>webdriverio</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
                 
                 </td>
@@ -328,21 +259,43 @@
 
             
 
-            <td class="description last"><p>can be used instead of snap snapDefinitions. see webjerk-snaps for more</p></td>
+            <td class="description last"><p>custom webdriverio configuration</p></td>
         </tr>
 
     
-    </tbody>
-</table>
 
+        <tr>
+            
+                <td class="name"><code>concurrency</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
             </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>number of concurrent desiredCapabilities to launch at once</p></td>
         </tr>
 
     
     </tbody>
 </table>
-
-
 
 
 
@@ -376,7 +329,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line22">line 22</a>
+        <a href="configuration.js.html">configuration.js</a>, <a href="configuration.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -388,37 +341,33 @@
 </dl>
 
 
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
         
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
+            <h3>Example</h3>
+            
+    <pre class="prettyprint"><code>var configTemplate = {
+  desiredCapabilities: [
+    { browserName: 'chrome' },
+    { browserName: 'firefox' }
+  ],
+  snapDefinitions: [{ name: 'my-widget', elem: '#my_widget' }],
+  snapDefinitionsFromWindow: function queryDivSnapDefinitions (divs, message) {
+    // @NOTE this JS is run in the _browser_ context
+    // webdriverio JS serialziation requires semis. :/
+    var divs = document.getElementsByTagName('div');
+    var map = [];
+    var i = 0;
+    var tDiv;
+    while (divs[i]) {
+      tDiv = divs[i];
+      if (!tDiv.id) tDiv.id = '__dummy_div_' + i;
+      map.push({ elem: '#' + tDiv.id, name: tDiv.id });
+      ++i;
+    }
+    return map;
+  },
+  url: 'localhost:3333',
+  webdriverio: {}
+}</code></pre>
 
         
     

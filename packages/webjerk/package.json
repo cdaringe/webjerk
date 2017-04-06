@@ -5,8 +5,7 @@
   "main": "src/index.js",
   "license": "MIT",
   "devDependencies": {
-    "@semantic-release/condition-codeship": "^1.1.0",
-    "@semantic-release/release-notes-generator": "^2.0.0",
+
     "perish": "^1.0.1",
     "tape": "^4.6.3"
   },
@@ -15,14 +14,7 @@
     "lodash": "^4.17.4"
   },
   "scripts": {
-    "test": "node test/",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
-  },
-  "release": {
-    "generateNotes": "./node_modules/@semantic-release/release-notes-generator",
-    "verifyConditions": [
-      "./node_modules/@semantic-release/condition-codeship"
-    ]
+    "test": "node test/"
   },
   "repository": {
     "type": "git",

@@ -18,5 +18,6 @@
     "publish-retry": "node scripts/publish"
   },
   "dependencies": {
+    "lodash": "^4.17.4"
   }
 }

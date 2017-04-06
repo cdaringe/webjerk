@@ -15,7 +15,7 @@
   },
   "scripts": {
     "lint": "standard",
-    "bootstrap": "lerna bootstrap --npm-client yarn",
+    "bootstrap": "lerna bootstrap",
     "publish:lerna": "lerna publish",
     "publish:retry": "node scripts/publish",
     "test": "lerna run test --stream"

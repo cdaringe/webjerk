@@ -15,7 +15,8 @@
   },
   "scripts": {
     "lint": "standard",
-    "publish-retry": "node scripts/publish"
+    "publish:lerna": "lerna publish --npm-client yarn",
+    "publish:retry": "node scripts/publish"
   },
   "dependencies": {
     "lodash": "^4.17.4"

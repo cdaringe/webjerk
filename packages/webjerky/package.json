@@ -1,6 +1,6 @@
 {
   "name": "webjerky",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "connect to sauce, fire up a static server, do some screenshot testing!",
   "main": "src/index.js",
   "author": "cdaringe",
@@ -10,7 +10,7 @@
     "webjerk": "^0.1.1",
     "webjerk-process-wrangler": "^0.1.0",
     "webjerk-saucie": "^0.1.0",
-    "webjerk-snaps": "^0.1.0"
+    "webjerk-snaps": "^0.1.3"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,12 @@
+{
+  "name": "webjerk",
+  "version": "1.0.0",
+  "description": "browser automation pipelines & plugins",
+  "main": "index.js",
+  "repository": "git@github.com:cdaringe/webjerk.git",
+  "author": "cdaringe",
+  "license": "MIT",
+  "devDependencies": {
+    "lerna": "2.0.0-beta.38"
+  }
+}

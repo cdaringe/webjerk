@@ -1,0 +1,31 @@
+{
+  "name": "webjerk",
+  "description": "browser test pipelining utilities",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@semantic-release/condition-codeship": "^1.1.0",
+    "@semantic-release/release-notes-generator": "^2.0.0",
+    "perish": "^1.0.1",
+    "tape": "^4.6.3"
+  },
+  "dependencies": {
+    "debug": "^2.6.3",
+    "lodash": "^4.17.4"
+  },
+  "scripts": {
+    "test": "node test/",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  },
+  "release": {
+    "generateNotes": "./node_modules/@semantic-release/release-notes-generator",
+    "verifyConditions": [
+      "./node_modules/@semantic-release/condition-codeship"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cdaringe/webjerk"
+  }
+}

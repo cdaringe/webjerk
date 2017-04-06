@@ -1,0 +1,44 @@
+{
+  "name": "webjerk-snaps",
+  "description": "use CSS screenshot testing in webjerk",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "author": "cdaringe",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "lodash": "^4.17.4",
+    "mkdirp": "^0.5.1",
+    "wdio-sauce-service": "^0.3.1",
+    "wdio-screenshot": "^0.5.2",
+    "webdriverio": "4.2.16",
+    "webjerk-image-set-diff": "^0.1.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^0.12.0",
+    "httpster": "^1.0.3",
+    "jsdoc": "^3.4.3",
+    "minami": "^1.1.1",
+    "resolve-jsdoc-bin": "^1.0.0",
+    "ripcord": "1.2.4",
+    "tape": "^4.6.3",
+    "webjerk": "0.0.2",
+    "webjerk-process-wrangler": "^0.0.6"
+  },
+  "scripts": {
+    "test": "node test/",
+    "docs": "ripcord docs",
+    "docs-publish": "ripcord docs --publish",
+    "postpublish": "npm run docs-publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cdaringe/webjerk-snaps"
+  },
+  "ripcord": {
+    "rules": [
+      "api-docs-generate",
+      "api-docs-publish"
+    ]
+  }
+}

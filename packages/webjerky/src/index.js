@@ -52,12 +52,13 @@ module.exports = function (conf) {
               browserName: 'chrome',
               tags: ['webjerk-chrome'],
               name: conf.testName
-            },
-            {
-              browserName: 'safari',
-              tags: ['webjerk-safari'],
-              name: conf.testName
             }
+            // ,
+            // {
+            //   browserName: 'safari',
+            //   tags: ['webjerk-safari'],
+            //   name: conf.testName
+            // }
             // ,
             // {
             //   browserName: 'MicrosoftEdge',

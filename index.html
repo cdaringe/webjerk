@@ -47,8 +47,18 @@
 
 
     <section class="readme">
-        <article><h1>webjerky</h1><p>connect to sauce, fire up a static server, do some screenshot testing!</p>
-<p>webjerky is a tiny script that wires together a few webjerk plugins, &amp; runs element-wise screenshot testing in saucelabs.  you can read the single file source for a better idea!</p>
+        <article><h1>webjerky</h1><p>connect to sauce labs, fire up a static server, &amp; do some screenshot testing!</p>
+<p>webjerky is a tiny script that wires together a few webjerk plugins.  it runs element-wise screenshot testing in real browsers on saucelabs.  you can read the single file source for a better idea!</p>
+<p>specifically, it:</p>
+<ul>
+<li>generates snaps from <a href="../webjerky-snaps">webjerky-snaps</a>,</li>
+<li>compares test snaps from reference snaps with <a href="../webjerk-image-set-diff">webjerk-image-set-diff</a><ul>
+<li>see ^^ docs to see how to use the comparison algorithm, approve new images, etc</li>
+</ul>
+</li>
+<li>creates reports from <a href="../webjerk-image-set-diff-reporter">webjerk-image-set-diff-reporter</a> when differences detected</li>
+</ul>
+<p><img width="300px" src="https://raw.githubusercontent.com/cdaringe/webjerk-image-set-diff-reporter/master/img/example.gif" /></p>
 <h2>usage</h2><p><a href="https://cdaringe.github.io/webjerky/index.html">API documentation lives here</a>.</p>
 <pre class="prettyprint source lang-js"><code>var webjerky = require('webjerky')
 var conf = { ... } // see API docs

@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-webjerky.html">webjerky</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-webjerk-snaps.html">webjerk-snaps</a><ul class='methods'><li data-type='method'><a href="module-webjerk-snaps.html#~capture">capture</a></li><li data-type='method'><a href="module-webjerk-snaps.html#~main">main</a></li><li data-type='method'><a href="module-webjerk-snaps.html#~post">post</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="configuration.html">configuration</a></li></ul>
 </nav>
 
 <div id="main">
@@ -47,12 +47,64 @@
 
 
     <section class="readme">
-        <article><h1>webjerky</h1><p>connect to sauce, fire up a static server, do some screenshot testing!</p>
-<p>webjerky is a tiny script that wires together a few webjerk plugins, &amp; runs element-wise screenshot testing in saucelabs.  you can read the single file source for a better idea!</p>
-<h2>usage</h2><p><a href="https://cdaringe.github.io/webjerky/index.html">API documentation lives here</a>.</p>
-<pre class="prettyprint source lang-js"><code>var webjerky = require('webjerky')
-var conf = { ... } // see API docs
-webjerky(conf).then(...) // `snaps/` will be a dir with the result of `webjerk-snaps` within!</code></pre></article>
+        <article><h1>webjerk-snaps</h1><p><img src="https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg" alt=""></p>
+<p>website visual regression testing.</p>
+<p>this package:</p>
+<ul>
+<li>browses to a webpage via selenium</li>
+<li>screenshots targeted CSS selectors, generating PNGs</li>
+<li>creates a new reference image set <em>or</em> compares the new set to a reference set<ul>
+<li>on comparison failure (optionally) <a href="https://github.com/cdaringe/webjerk-image-set-diff-reporter">generates a static website highlighting the failed comparisons</a>.  this is handy if you you want your CI to deploy the site somewhere for public viewing.</li>
+</ul>
+</li>
+</ul>
+<p>this type of testing is somtimes also called CSS testing or screenshot testing.</p>
+<p>don't like the way this package works?  hack it!  all things <code>webjerk</code> are small and modular.  feel free to drop us an issue on GitHub with questions &amp; comments too!</p>
+<h2>usage</h2><p><a href="https://cdaringe.github.io/webjerk-snaps/index.html">API documentation lives here</a>.</p>
+<ul>
+<li>to get image baselines, create a config and run. see the <code>#example</code> section</li>
+<li>run it!<ul>
+<li>all image <strong>basenames</strong> that are <em>not</em> present in the reference set become part of the reference set.</li>
+</ul>
+</li>
+<li>subsequent runs compare against these images</li>
+</ul>
+<h2>example</h2><pre class="prettyprint source lang-js"><code>// test.js
+'use strict'
+
+var wj = require('webjerk')
+
+wj.run({
+  plugins: [
+    {
+      name: 'webjerk-snaps',
+      config: {
+        desiredCapabilities: [ // see webdriverio or selenium docs!
+          { browserName: 'chrome' },
+          { browserName: 'firefox' }
+        ],
+        url: 'http://localhost:3333', // what page to extract snaps from
+        testName: 'screenshot-all-divs',
+        snapDefinitions: [{ elem: 'div', name: 'best div' }], // OR,
+        snapDefinitionsFromWindow: function queryDivSnapDefinitions (divs, message) {
+          // @NOTE this JS is run in the _browser_ context
+          // webdriverio JS serialziation requires semis. :/
+          var divs = document.getElementsByTagName('div');
+          var map = [];
+          var i = 0;
+          var tDiv;
+          while (divs[i]) {
+            tDiv = divs[i];
+            if (!tDiv.id) tDiv.id = '__dummy_div_' + i;
+            map.push({ elem: '#' + tDiv.id, name: tDiv.id });
+            ++i;
+          }
+          return map;
+        }
+      }
+    }
+  ]
+})</code></pre></article>
     </section>
 
 

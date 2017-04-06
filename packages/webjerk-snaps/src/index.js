@@ -53,11 +53,9 @@ module.exports = function registerSnaps () {
         .then(() => {
           return snapDefs.reduce((client, sd) => {
             var snapFilename = path.join(snapRunDir, `${sd.name}-${browser}.png`)
-            return client.saveElementScreenshot(snapFilename, sd.elem)
-            .catch(err => {
-              // https://github.com/zinserjan/wdio-screenshot/pull/54
-              if (!err.message.match(/Y is out of range/)) throw err
-            })
+            return client
+            .waitForVisible(sd.elem, 1000)
+            .saveElementScreenshot(snapFilename, sd.elem)
           }, client)
         })
         .then(() => client.end())

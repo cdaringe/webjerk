@@ -83,13 +83,15 @@ module.exports = function (conf) {
         config: {
           concurrency: 5,
           desiredCapabilities: [
-            {
-              browserName: 'firefox',
-              tags: ['webjerk-ff'],
-              name: conf.testName
-            },
+            // {
+            //   browserName: 'firefox',
+            //   tags: ['webjerk-ff'],
+            //   name: conf.testName
+            // },
             {
               browserName: 'chrome',
+              platform: 'macOS 10.12',
+              version: '57.0',
               tags: ['webjerk-chrome'],
               name: conf.testName
             }

@@ -6,7 +6,7 @@ webjerky is a tiny script that wires together a few webjerk plugins.  it runs el
 
 specifically, it:
 
-- generates snaps from [webjerky-snaps](../webjerky-snaps),
+- generates snaps from [webjerk-snaps](../webjerky-snap),
 - compares test snaps from reference snaps with [webjerk-image-set-diff](../webjerk-image-set-diff)
   - see ^^ docs to see how to use the comparison algorithm, approve new images, etc
 - creates reports from [webjerk-image-set-diff-reporter](../webjerk-image-set-diff-reporter) when differences detected

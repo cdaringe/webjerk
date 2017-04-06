@@ -10,7 +10,13 @@ the comparisons use [blink-diff](https://github.com/yahoo/blink-diff) to compare
 var ImageSetDiffer = require('webjerk-image-set-diff')
 var refDir = '/reference-images'
 var runDir = '/test-run-images'
-var idr = new ImageSetDiffer({ refDir, runDir, report: true, allowNewImages: false })
+var idr = new ImageSetDiffer({
+  refDir,
+  runDir,
+  report: true, // generate a report?
+  allowNewImages: true, // allow new images into the ref set
+  approveChanges: false // appove run images as new refs. migrate run/ images to ref/
+})
 idr.run()
 .then(...) // resolves a set of blinkDifference results
 ```
@@ -26,4 +32,5 @@ console.log(err.differences)
 
 some settings may be set from the env:
 
-`WEBJERK_ALLOW_NEW_IMAGES`, empty string ~false, anything else, ~true
+- `WEBJERK_ALLOW_NEW_IMAGES`, empty string ~false, anything else, ~true
+- `WEBJERK_APPROVE_CHANGES`, empty string ~false, anything else, ~true

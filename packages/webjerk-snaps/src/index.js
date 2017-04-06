@@ -53,8 +53,9 @@ module.exports = function registerSnaps () {
         .then(() => {
           return snapDefs.reduce((client, sd) => {
             var snapFilename = path.join(snapRunDir, `${sd.name}-${browser}.png`)
+            console.log(`snapping ${sd.name}-${browser}.png`)
             return client
-            .waitForVisible(sd.elem, 1000)
+            .waitForVisible(sd.elem)
             .saveElementScreenshot(snapFilename, sd.elem)
           }, client)
         })

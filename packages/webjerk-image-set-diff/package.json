@@ -16,5 +16,8 @@
   "devDependencies": {
     "perish": "^1.0.1",
     "tape": "^4.6.3"
+  },
+  "scripts": {
+    "test": "node test/"
   }
 }

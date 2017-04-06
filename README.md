@@ -12,7 +12,7 @@ webjerk accepts plugins to register with it, and it runs those plugins.
 
 ## what can it do that's cool?
 
-"this sounds lame. can it do anything cool?"
+"this sounds lame. the README is waaay to small for this to be a usuable project. can it even do anything cool?"
 
 no. but its plugins can!
 

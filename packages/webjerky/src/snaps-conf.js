@@ -3,13 +3,14 @@
 var defaultsDeep = require('lodash/defaultsDeep')
 
 module.exports = function getSnapsConfig (conf) {
+  var isLocal = conf.localSelenium != null ? conf.localSelenium : !!process.env.WEBJERKY_LOCAL
   return defaultsDeep({}, conf.snaps, {
     concurrency: 5,
     desiredCapabilities: [
       {
         browserName: 'firefox',
-        platform: 'macOS 10.12',
-        version: '52',
+        platform: isLocal ? null : 'macOS 10.12',
+        version: isLocal ? null : '52',
         tags: ['webjerk-ff'],
         name: conf.testName
       }
@@ -41,8 +42,8 @@ module.exports = function getSnapsConfig (conf) {
       //   name: conf.testName
       // }
     ],
-    port: 4445,
-    webdriverio: {
+    port: isLocal ? 4444 : 4445,
+    webdriverio: isLocal ? null : {
       services: ['sauce'],
       user: process.env.SAUCE_USERNAME,
       key: process.env.SAUCE_ACCESS_KEY

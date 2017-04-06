@@ -5,5 +5,8 @@
   "main": "src/index.js",
   "repository": "git@github.com:cdaringe/webjerk",
   "author": "cdaringe <cdaringe@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "test": "echo 'huuh? tests? HOW FUNNY! BAAAAAAHHHAHA HAHA HA LOLZ ROFLCOPTERS ETC'"
+  }
 }

@@ -32,6 +32,7 @@
   "scripts": {
     "docs": "ripcord docs",
     "docs-publish": "ripcord docs --publish",
-    "postpublish": "npm run docs-publish"
+    "postpublish": "npm run docs-publish",
+    "test": "echo 'baaaaaaaaaahahahaha! boooooorrrriiiinng'"
   }
 }

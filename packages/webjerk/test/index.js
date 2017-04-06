@@ -18,8 +18,8 @@ tape('plugins', t => {
   }
   wj.run(conf)
   .then(res => {
-    t.ok(wj._config.hooks.pre['test-plugin'])
-    t.ok(wj._config.hooks.post['test-plugin'])
+    t.ok(wj._config.hooks.pre.registerDummyPlugin)
+    t.ok(wj._config.hooks.post.registerDummyPlugin)
     t.end()
   })
 })

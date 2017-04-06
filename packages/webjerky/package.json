@@ -1,6 +1,6 @@
 {
   "name": "webjerky",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "connect to sauce, fire up a static server, do some screenshot testing!",
   "main": "src/index.js",
   "author": "cdaringe",

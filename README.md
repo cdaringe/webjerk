@@ -1,6 +1,6 @@
 # webjerk
 
-browser automation pipeline & plugins
+automation pipeline & plugins in _nodejs_.
 
 ## description
 

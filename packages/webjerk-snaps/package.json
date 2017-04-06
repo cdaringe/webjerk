@@ -22,7 +22,7 @@
     "resolve-jsdoc-bin": "^1.0.0",
     "ripcord": "1.2.4",
     "tape": "^4.6.3",
-    "webjerk": "0.0.2",
+    "webjerk": "^0.1.1",
     "webjerk-process-wrangler": "^0.0.6"
   },
   "scripts": {

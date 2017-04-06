@@ -12,7 +12,8 @@
       "cwd": "${workspaceRoot}",
       "skipFiles": [
 
-      ]
+      ],
+      "protocol": "inspector"
     },
     {
       "type": "node",

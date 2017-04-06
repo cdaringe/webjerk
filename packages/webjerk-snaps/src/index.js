@@ -56,7 +56,7 @@ module.exports = function registerSnaps () {
             return client.saveElementScreenshot(snapFilename, sd.elem)
             .catch(err => {
               // https://github.com/zinserjan/wdio-screenshot/pull/54
-              if (!err.message.match(/endY is out of range/)) throw err
+              if (!err.message.match(/Y is out of range/)) throw err
             })
           }, client)
         })

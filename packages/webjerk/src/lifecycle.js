@@ -1,33 +1,37 @@
 'use strict'
 
-var debug = require('debug')
+var debug = require('debug')('webjerk:lifecycle')
 var set = require('lodash/set')
 var plugins = require('./plugins')
 
 var results = {}
 
-function executeLifecycleHooks (config, lifecycle) {
+async function executeLifecycleHooks (config, lifecycle) {
   var hooks = plugins.getLifecycleHooks({ config, lifecycle })
   if (!hooks.length) return Promise.resolve()
-  return hooks.reduce(
-    function chainLifecycleHooks (chain, hook) {
-      return chain.then(function execHook () {
-        var hookResult = hook.fn.call(hook.plugin, hook.config, config, results)
-        return Promise.resolve(hookResult)
-        .then(res => { set(results, `${lifecycle}.${hook.plugin.name}`, res) })
-      })
-    },
-    Promise.resolve()
-  )
+  for (var i in hooks) {
+    var hook = hooks[i]
+    try {
+      debug(`executing lifecycle ${lifecycle} on plugin "${hook.plugin.name}"`)
+      var res = await Promise.resolve(hook.fn.call(hook.plugin, hook.config, config, results))
+      set(results, `${lifecycle}.${hook.plugin.name}`, res)
+    } catch (err) {
+      debug(`failed to execute lifecycle ${lifecycle} on plugin "${hook.plugin.name}"`)
+      throw err
+    }
+  }
 }
 
 module.exports = function registerLifecycle (lifecycle) {
-  return function execLifecycle (config) {
-    var log = debug(lifecycle)
-    var chain = Promise.resolve()
-    log(lifecycle)
-    if (lifecycle === 'pre') chain = chain.then(() => plugins.fromConfig(config))
-    chain = chain.then(() => executeLifecycleHooks(config, lifecycle))
-    return chain
+  debug(`registering "${lifecycle}"`)
+  return async function execLifecycle (config) {
+    debug(`executing "${lifecycle}"`)
+    if (lifecycle === 'pre') await plugins.fromConfig(config) // register all plugins
+    try {
+      await executeLifecycleHooks(config, lifecycle)
+    } catch (err) {
+      debug(`failed to execute "${lifecycle}`)
+      throw err
+    }
   }
 }

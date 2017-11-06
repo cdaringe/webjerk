@@ -1,5 +1,6 @@
 'use strict'
 
+var debug = require('debug')('webjerk:plugins')
 var forOwn = require('lodash/forOwn')
 var set = require('lodash/set')
 var get = require('lodash/get')
@@ -9,6 +10,9 @@ var isObject = require('lodash/isObject')
 var isFunction = require('lodash/isFunction')
 var path = require('path')
 var lifecycles = ['pre', 'post', 'main']
+var bb = require('bluebird')
+
+var pluginCount = 0
 
 function importFunctionFromFile (reg) {
   var isAbs = path.isAbsolute(reg)
@@ -27,9 +31,10 @@ var plugins = {
    */
   fromConfig (config) {
     var configPlugins = config.plugins || []
-    return Promise.all(
-      configPlugins
-      .map((pluginDecl, i) => {
+    debug('loading all plugins from configuration')
+    return bb.map(
+      configPlugins,
+      async (pluginDecl, i) => {
         var pluginConfig = {}
         var register
         var name
@@ -37,7 +42,7 @@ var plugins = {
           if (!isFunction(pluginDecl.register)) throw new Error('plugin declaration missing register function')
           register = pluginDecl.register
           pluginConfig = pluginDecl.config || pluginConfig
-          name = pluginDecl.name || register.name
+          name = pluginDecl.name || `unnamed-plugin-${++pluginCount}`
         }
         if (isString(pluginDecl)) {
           register = importFunctionFromFile(pluginDecl)
@@ -51,9 +56,11 @@ var plugins = {
         }
         if (!isFunction(register)) return Promise.reject(new Error('plugin did not provide register function'))
         if (!isString(name)) return Promise.reject(new Error('missing plugin name'))
-        return Promise.resolve(register(config))
-        .then(plugin => this.register({ name, plugin, pluginConfig, config }))
-      })
+        debug(`registering plugin "${name}"`)
+        var plugin = await Promise.resolve(register(config))
+        return this.register({ name, plugin, pluginConfig, config })
+      },
+      { concurrency: 1 }
     )
   },
   getLifecycleHooks ({ config, lifecycle }) {

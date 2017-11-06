@@ -1,13 +1,14 @@
-# webjerky
+# snapjerk
 
-connect to sauce labs, fire up a static server, & do some screenshot testing!
+web application screenshot testing in docker.
 
-webjerky is a tiny script that wires together a few webjerk plugins.  it runs element-wise screenshot testing in real browsers on saucelabs.  you can read the single file source for a better idea!
+
+snapjerk is a small script that wires together a few webjerk plugins.  it runs element-wise screenshot testing in real browsers in a docker container.  you can read the single file source for a better idea!
 
 specifically, it:
 
-- generates snaps from [webjerk-snaps](../webjerky-snap),
-  - by default, 'jerky looks for sauce creds, but you can test against a local selenium instance by passing `conf.localSelenium` or `WEBJERKY_LOCAL=true`
+- generates snaps from [webjerk-snaps](../snapjerk-snap),
+  - by default, 'jerky looks for sauce creds, but you can test against a local selenium instance by passing `conf.localSelenium` or `snapjerk_LOCAL=true`
 - compares test snaps from reference snaps with [webjerk-image-set-diff](../webjerk-image-set-diff)
   - see ^^ docs to see how to use the comparison algorithm, approve new images, etc
 - creates reports from [webjerk-image-set-diff-reporter](../webjerk-image-set-diff-reporter) when differences detected
@@ -16,10 +17,10 @@ specifically, it:
 
 ## usage
 
-[API documentation lives here](https://cdaringe.github.io/webjerky/index.html).
+[API documentation lives here](https://cdaringe.github.io/snapjerk/index.html).
 
 ```js
-var webjerky = require('webjerky')
+var snapjerk = require('snapjerk')
 var conf = { ... } // see API docs
-webjerky(conf).then(...) // `snaps/` will be a dir with the result of `webjerk-snaps` within!
+snapjerk(conf).then(...) // `snaps/` will be a dir with the result of `webjerk-snaps` within!
 ```

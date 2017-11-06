@@ -1,11 +1,12 @@
 {
-  "name": "webjerky",
-  "version": "0.2.1",
+  "name": "snapjerk",
+  "version": "0.3.0",
   "description": "connect to sauce, fire up a static server, do some screenshot testing!",
   "main": "src/index.js",
   "author": "cdaringe",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "httpster": "^1.0.3",
     "webjerk": "^0.2.1",
     "webjerk-process-wrangler": "^0.1.13",
@@ -14,24 +15,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:cdaringe/webjerky.git"
-  },
-  "ripcord": {
-    "rules": [
-      "api-docs-generate",
-      "api-docs-publish"
-    ]
+    "url": "https://github.com/cdaringe/webjerk"
   },
   "devDependencies": {
-    "gh-pages": "^0.12.0",
-    "jsdoc": "^3.4.3",
-    "minami": "^1.1.1",
-    "resolve-jsdoc-bin": "^1.0.0",
-    "ripcord": "^1.2.4"
+    "jsdock": "^1.0.3",
+    "resolve-jsdoc-bin": "^1.0.0"
   },
   "scripts": {
-    "docs": "ripcord docs",
-    "docs-publish": "ripcord docs --publish",
+    "docs:build": "jsdock build",
+    "docs:publish": "jsdock publish",
     "postpublish": "npm run docs-publish",
     "test": "echo 'baaaaaaaaaahahahaha! boooooorrrriiiinng'"
   }

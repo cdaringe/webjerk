@@ -1,68 +1,56 @@
 'use strict'
 
-var cp = require('child_process')
 var path = require('path')
-var fs = require('fs')
+var fs = require('fs-extra')
+var bb = require('bluebird')
+var execa = require('execa')
 
-function ensureProcessIsGone (pid) {
-  return new Promise(function (resolve, reject) {
-    var probeInterval = setInterval(function () {
-      try {
-        process.kill(pid, 0)
-      } catch (err) {
-        clearTimeout(probeInterval)
-        if (err.code === 'ESRCH') resolve()
-        else reject(err)
-      }
-    }, 250)
-  })
-}
-function removePIDFile (pidFile) {
-  var pid = null
-  try {
-    pid = parseInt(fs.readFileSync(pidFile).toString(), 10)
-  } catch (_err) {}
-  try { fs.unlinkSync(pidFile) } catch (_err) {}
-  return pid
+async function ensureProcessIsGone (pid) {
+  var processAlive = true
+  while (processAlive) {
+    try {
+      process.kill(pid, 0)
+    } catch (err) {
+      if (err.code === 'ESRCH') processAlive = false
+      throw err
+    }
+    if (processAlive) await bb.delay(250)
+  }
 }
 
 function createProcessLifecycleHooks () {
   return {
     _pidFile: null,
-    setup (config) {
+    async setup (config) {
       this._pidFile = path.join(process.cwd(), `${path.basename(config.cp.bin)}.pid`)
-      return new Promise((res, rej) => { // eslint-disable-line
-        var exit = (err, code, stderr) => {
-          removePIDFile(this._pidFile)
-          if (err || code) return rej(err || new Error(stderr || `${config.cp.bin} exited to boot ${code}`))
-          return res()
-        }
-        try {
-          removePIDFile(this._pidFile)
-          var stderr = ''
-          var srv = cp.spawn(config.cp.bin, config.cp.args || [], config.cp.opts || { cwd: __dirname })
-          if (srv.stderr) srv.stderr.on('data', chunk => { stderr += chunk })
-          fs.writeFileSync(this._pidFile, srv.pid)
-          console.log(`wrote PID file: ${this._pidFile}`)
-          srv.on('error', code => exit(null, code, stderr))
-          srv.on('exit', code => {
-            return exit(null, code, stderr)
-          })
-          setTimeout(() => res(), 5000)
-        } catch (err) {
-          return exit(err)
-        }
-      })
+      var exit = function (err, code) {
+        fs.removeSync(this._pidFile)
+        if (err || code) throw (err || new Error(`${config.cp.bin} exited to boot ${code}`))
+      }.bind(this)
+      try {
+        await fs.remove(this._pidFile)
+        var srv = execa(config.cp.bin, config.cp.args || [], config.cp.opts || { cwd: __dirname, stdio: 'inherit' })
+        await fs.writeFile(this._pidFile, srv.pid)
+        console.log(`wrote PID file: ${this._pidFile}`)
+        srv.on('error', code => exit(null, code))
+        srv.on('exit', code => exit(null, code))
+      } catch (err) {
+        return exit(err)
+      }
     },
-    teardown () {
+    async teardown () {
       console.log(`removing pid file ${this._pidFile}`)
-      return Promise.resolve()
-      .then(() => removePIDFile(this._pidFile))
-      .then(pid => {
-        var p = ensureProcessIsGone(pid)
+      var pid
+      try {
+        pid = parseInt(await fs.read(this._pidFile), 10)
+      } catch (err) {
+        // pass
+      }
+      if (pid || pid === 0) {
+        await ensureProcessIsGone(pid)
         process.kill(pid, 'SIGTERM')
-        return p
-      })
+      }
+      await fs.remove(this._pidFile)
     }
   }
 }

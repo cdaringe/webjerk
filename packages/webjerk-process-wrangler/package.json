@@ -8,5 +8,10 @@
   "license": "MIT",
   "scripts": {
     "test": "echo 'huuh? tests? HOW FUNNY! BAAAAAAHHHAHA HAHA HA LOLZ ROFLCOPTERS ETC'"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "execa": "^0.8.0",
+    "fs-extra": "^4.0.2"
   }
 }

@@ -2,6 +2,7 @@
 
 var assign = require('lodash/assign')
 var lifecycle = require('./lifecycle')
+var debug = require('debug')('webjerk:index')
 
 module.exports = {
   async exit (errs) {
@@ -17,18 +18,23 @@ module.exports = {
     if (!config) throw new Error('config missing')
     config = this._config = assign({}, { plugins: [] }, config)
     var errs = []
-
+    var results = {}
+    var preLifecycleResults
+    var mainLifecycleResults
+    var postLifecycleResults
     try {
-      await lifecycle('pre')(config)
-      await lifecycle('main')(config)
+      preLifecycleResults = await lifecycle('pre')(config)
+      mainLifecycleResults = await lifecycle('main')(config)
     } catch (err) {
       errs.push(err) // fail gracefully, allowing post to cleanup
     }
     try {
-      await lifecycle('post')(config)
+      postLifecycleResults = await lifecycle('post')(config)
     } catch (err) {
       errs.push(err) // fail gracefully, allowing post to cleanup
     }
+    Object.assign(results, preLifecycleResults, mainLifecycleResults, postLifecycleResults)
+    debug(results)
     this.exit(errs)
   }
 }

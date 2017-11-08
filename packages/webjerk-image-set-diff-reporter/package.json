@@ -11,8 +11,9 @@
   "dependencies": {
     "axios": "^0.16.0",
     "bluebird": "^3.5.0",
-    "cross-spawn-promise": "^0.10.1",
-    "fs-extra": "^2.1.2",
+    "debug": "^3.1.0",
+    "execa": "^0.8.0",
+    "fs-extra": "^4.0.2",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-image-diff": "^0.1.0",
@@ -21,9 +22,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "node test/"
+    "test": "ava test/*.test.js"
   },
   "devDependencies": {
-    "tape": "^4.6.3"
+    "ava": "^0.23.0"
   }
 }

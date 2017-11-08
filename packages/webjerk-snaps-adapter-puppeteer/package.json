@@ -1,6 +1,6 @@
 {
-  "name": "webjerk-snaps",
-  "description": "use CSS screenshot testing in webjerk",
+  "name": "webjerk-snaps-adapter-puppeteer",
+  "description": "puppeteer adapter for webjerk-snaps",
   "version": "0.2.1",
   "main": "src/index.js",
   "license": "MIT",
@@ -8,12 +8,12 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "debug": "^3.1.0",
+    "execa": "^0.8.0",
     "fs-extra": "^4.0.2",
+    "httpster": "^1.0.3",
     "lodash": "^4.17.4",
-    "webjerk-image-set-diff": "^0.2.0"
-  },
-  "devDependencies": {
-    "webjerk-snaps-adapter-puppeteer": "^0.2.1"
+    "perish": "^1.0.1",
+    "serialize-javascript": "^1.4.0"
   },
   "repository": {
     "type": "git",

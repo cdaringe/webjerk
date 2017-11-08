@@ -6,11 +6,12 @@
   "author": "cdaringe",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.17.0",
     "bluebird": "^3.5.1",
+    "debug": "^3.1.0",
     "httpster": "^1.0.3",
     "webjerk": "^0.2.1",
     "webjerk-process-wrangler": "^0.1.13",
-    "webjerk-saucie": "^0.1.13",
     "webjerk-snaps": "^0.2.1"
   },
   "repository": {
@@ -25,6 +26,6 @@
     "docs:build": "jsdock build",
     "docs:publish": "jsdock publish",
     "postpublish": "npm run docs-publish",
-    "test": "echo 'baaaaaaaaaahahahaha! boooooorrrriiiinng'"
+    "test": "echo 'see webjerk tests'"
   }
 }

@@ -4,17 +4,24 @@ var path = require('path')
 var fs = require('fs-extra')
 var bb = require('bluebird')
 var execa = require('execa')
+var isNil = require('lodash/isNil')
+var debug = require('debug')('webjerk:process-wrangler')
 
 async function ensureProcessIsGone (pid) {
+  if (isNil(pid)) return
   var processAlive = true
   while (processAlive) {
     try {
-      process.kill(pid, 0)
+      var killed = process.kill(pid, 0)
+      if (killed) processAlive = false
     } catch (err) {
       if (err.code === 'ESRCH') processAlive = false
       throw err
     }
-    if (processAlive) await bb.delay(250)
+    if (processAlive) {
+      debug(`pid ${pid} not dead yet, trying again`)
+      await bb.delay(250)
+    }
   }
 }
 
@@ -23,6 +30,7 @@ function createProcessLifecycleHooks () {
     _pidFile: null,
     async setup (config) {
       this._pidFile = path.join(process.cwd(), `${path.basename(config.cp.bin)}.pid`)
+      debug(`pid file written to: ${this._pidFile}`)
       var exit = function (err, code) {
         fs.removeSync(this._pidFile)
         if (err || code) throw (err || new Error(`${config.cp.bin} exited to boot ${code}`))
@@ -31,7 +39,7 @@ function createProcessLifecycleHooks () {
         await fs.remove(this._pidFile)
         var srv = execa(config.cp.bin, config.cp.args || [], config.cp.opts || { cwd: __dirname, stdio: 'inherit' })
         await fs.writeFile(this._pidFile, srv.pid)
-        console.log(`wrote PID file: ${this._pidFile}`)
+        debug(`wrote PID file: ${this._pidFile}`)
         srv.on('error', code => exit(null, code))
         srv.on('exit', code => exit(null, code))
       } catch (err) {
@@ -39,14 +47,16 @@ function createProcessLifecycleHooks () {
       }
     },
     async teardown () {
-      console.log(`removing pid file ${this._pidFile}`)
+      debug(`removing pid file ${this._pidFile}`)
       var pid
       try {
-        pid = parseInt(await fs.read(this._pidFile), 10)
+        var pidRaw = await fs.readFile(this._pidFile)
+        pid = parseInt(pidRaw, 10)
       } catch (err) {
         // pass
       }
-      if (pid || pid === 0) {
+      if (!isNil(pid)) {
+        debug(`pid ${pid} found. killin it.`)
         await ensureProcessIsGone(pid)
         process.kill(pid, 'SIGTERM')
       }

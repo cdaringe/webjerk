@@ -1,17 +1,26 @@
 'use strict'
 
 require('perish')
-var bb = require('bluebird')
-var fs = require('fs')
+var fs = require('fs-extra')
 var path = require('path')
-var spawn = require('cross-spawn-promise')
-bb.promisifyAll(fs)
-
+var execa = require('execa')
+var bb = require('bluebird')
 var pkgRoot = path.resolve(__dirname, '..', 'packages')
 
-fs.readdirAsync(pkgRoot)
-.then(pkgs => bb.map(pkgs, pkg => {
-  var p = spawn('npm', ['publish'], { cwd: path.join(pkgRoot, pkg) })
-  .catch(err => console.error(`failed to publish ${pkg}. ${err.message}. ${err.stderr}`))
-  return p
-}, { concurrency: 4 }))
+async function publish () {
+  const pkgs = await fs.readdir(pkgRoot)
+  await bb.map(
+    pkgs,
+    async pkg => {
+      try {
+        await execa('npm', ['publish'], { cwd: path.join(pkgRoot, pkg) })
+      } catch (err) {
+        // yes, swallow the error.  lerna publish is unreliable.
+        console.error(`failed to publish ${pkg}. ${err.message}. ${err.stderr}`)
+      }
+    },
+    { concurrency: 4 }
+  )
+}
+
+publish()

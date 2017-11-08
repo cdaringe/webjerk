@@ -18,4 +18,4 @@ webjerk accepts plugins to register with it, and it runs those plugins.
 
 no. but its plugins can!
 
-see [webjerky](packages/webjerky).
+see [snapjerk](packages/snapjerk).

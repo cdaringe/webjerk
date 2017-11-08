@@ -81,7 +81,9 @@ var plugins = {
   registerLifecycleHook ({ name, plugin, pluginConfig, hook, lifecycle, config }) {
     if (!isFunction(hook)) throw new Error(`key ${lifecycle} must be a lifecycle function`)
     var key = this.hookKey({ lifecycle, name })
-    if (get(config, key)) throw new Error(`plugin ${key} already set :(`)
+    if (get(config, key)) {
+      throw new Error(`plugin ${key} already set :(`)
+    }
     set(config, key, { fn: hook, config: pluginConfig, plugin, name })
   }
 }

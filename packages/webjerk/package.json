@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "license": "MIT",
   "devDependencies": {
-    "perish": "^1.0.1",
-    "tape": "^4.6.3"
+    "ava": "^0.23.0",
+    "perish": "^1.0.1"
   },
   "dependencies": {
     "bluebird": "^3.5.1",
@@ -14,7 +14,7 @@
     "lodash": "^4.17.4"
   },
   "scripts": {
-    "test": "node test/"
+    "test": "ava test/*.test.js"
   },
   "repository": {
     "type": "git",

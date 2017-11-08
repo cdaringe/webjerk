@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import './App.css'
 import SlideyThing from './SlideyThing'
 import axios from 'axios'
+import logo from './skully.svg'
 
 class App extends Component {
   constructor (props) {
@@ -19,6 +20,7 @@ class App extends Component {
       <div className='App'>
         <div className='App-header'>
           <h2>Image Difference Report</h2>
+          <img alt='logo' src={logo} style={{width: '110px'}} />
         </div>
         <p className='content'>
           {(this.state.diffs || []).map((diff, i) => {

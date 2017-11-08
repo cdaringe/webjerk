@@ -1,16 +1,23 @@
 'use strict'
 
-var wd = require('webdriverio')
-var wdiosc = require('wdio-screenshot')
-var isObject = require('lodash/isObject')
-var bb = require('bluebird')
-var set = require('lodash/set')
-var get = require('lodash/get')
-var mkdirp = bb.promisify(require('mkdirp'))
-var path = require('path')
+var isNil = require('lodash/isNil')
 var Differ = require('webjerk-image-set-diff')
+var fs = require('fs-extra')
+var debug = require('debug')('webjerk-snaps')
+var path = require('path')
 
 var DEFAULT_WINDOW_EXEC =  function () { return {}; } // eslint-disable-line
+
+/**
+ * @typedef SnapsConfig
+ * @property {Number} [runId=Date.now()]
+ * @property {string} staticDirectory
+ * @property {string} [url]
+ * @property {string[]} [snapDefinitions]
+ * @property {function} [snapDefinitionsFromWindow]
+ * @property {string} [snapRunRoot=`pwd`/snaps/run]
+ * @property {string} [snapRefRoot=`pwd`/snaps/ref]
+ */
 
 /**
  * @module webjerk-snaps
@@ -20,73 +27,30 @@ var DEFAULT_WINDOW_EXEC =  function () { return {}; } // eslint-disable-line
  * `webjerk-image-set-diff` for executing the comparison algorithm.
  */
 module.exports = function registerSnaps () {
-  return {
+  return Object.assign({}, {
     name: 'snaps',
     /**
-     * launches a browser and captures screenshots
-     * @param {*} webdriverioConf
-     * @param {*} pluginConfig
-     * @param {*} webjerkconfig
-     * @returns {Promise}
-     */
-    capture (webdriverioConf, pluginConfig, webjerkconfig) {
-      var { testName, snapDefinitions, snapDefinitionsFromWindow, url } = pluginConfig
-      if (!testName) throw new Error('missing testName')
-      if (!snapDefinitions && !snapDefinitionsFromWindow) throw new Error('snapDefinitions or snapDefinitionsFromWindow must be set')
-      var client = wd.remote(webdriverioConf)
-      wdiosc.init(client)
-      console.log(`booting ${webdriverioConf.desiredCapabilities.browserName}`)
-      return client
-      .init()
-      .url(url)
-      .execute(snapDefinitionsFromWindow || DEFAULT_WINDOW_EXEC, '<msg>')
-      .then(function ({ value }) {
-        var browser = `${webdriverioConf.desiredCapabilities.browserName}-${webdriverioConf.desiredCapabilities.version || 'latest'}`
-        var snapDefs = snapDefinitionsFromWindow ? value : snapDefinitions
-        if (!snapDefs) throw new Error('no snapDefinitions were found')
-        var snapRoot = path.resolve(process.cwd(), 'snaps')
-        var snapRunRoot = path.resolve(snapRoot, 'runs')
-        var snapRefRoot = path.resolve(snapRoot, 'ref')
-        var snapRunDir = path.resolve(snapRunRoot, `run-${pluginConfig.runId}`)
-        return Promise.resolve()
-        .then(() => Promise.all([mkdirp(snapRunDir), mkdirp(snapRefRoot)]))
-        .then(() => {
-          return snapDefs.reduce((client, sd) => {
-            var snapFilename = path.join(snapRunDir, `${sd.name}-${browser}.png`)
-            return client
-            .waitForVisible(sd.elem)
-            .then(() => console.log(`snapping ${sd.name}-${browser}.png`))
-            .saveElementScreenshot(snapFilename, sd.elem)
-          }, client)
-        })
-        .then(() => client.end())
-        .then(() => ({ snapRefRoot, snapRunDir }))
-        .catch(err => client.end().then(() => { throw err }))
-      })
-    },
-    /**
      * webjerk main hook
-     * @param {*} pluginConfig
+     * @param {SnapsConfig} pluginConfig
      * @param {*} webjerkconfig
-     * @param {*} results
      */
-    main (pluginConfig, webjerkconfig, results) {
-      var capabilities = pluginConfig.desiredCapabilities || [{ browserName: 'chrome' }]
-      pluginConfig = pluginConfig || {}
-      if (!Array.isArray(capabilities)) capabilities = [capabilities]
-      if (!pluginConfig.runId) pluginConfig.runId = Date.now().toString()
-      // run each capability, i.e. run each requested browser
-      return bb.map(
-        capabilities,
-        capability => {
-          var webdriverioConf = pluginConfig.webdriverio || {}
-          if (!isObject(capability)) throw new Error('desiredCapabilities must be an object')
-          set(webdriverioConf, 'desiredCapabilities', capability)
-          if (!webdriverioConf.desiredCapabilities.browserName) throw new Error('browserName missing')
-          return this.capture(webdriverioConf, pluginConfig, webjerkconfig)
+    async main (pluginConfig, webjerkconfig) {
+      var runId = Date.now().toString()
+      this.conf = Object.assign(
+        {
+          adapter: 'webjerk-snaps-adapter-puppeteer',
+          runId,
+          snapRunRoot: path.join(process.cwd(), 'snaps', 'run', runId),
+          snapRefRoot: path.join(process.cwd(), 'snaps', 'ref')
         },
-        { concurrency: pluginConfig.concurrency || 1 }
+        pluginConfig
       )
+      await Promise.all([
+        fs.mkdirp(this.conf.snapRunRoot),
+        fs.mkdirp(this.conf.snapRefRoot)
+      ])
+      debug(`launching adapter ${this.conf.adapter}`)
+      return require(this.conf.adapter).capture(this.conf)
     },
     /**
      * webjerk post hook
@@ -94,12 +58,16 @@ module.exports = function registerSnaps () {
      * @param {*} webjerkconfig
      * @param {*} results
      */
-    post (pluginConfig, webjerkconfig, results) {
-      var res = get(results, `main[${this.name}]`)
-      if (!res || !res.length) return console.error('unable to find run & ref images')
-      var { snapRefRoot, snapRunDir } = res[0]
-      if (!snapRunDir || !snapRefRoot) throw new Error('expected snapRunDir & snapRefRoot from main results')
-      return Differ.factory({ refDir: snapRefRoot, runDir: snapRunDir, report: pluginConfig.report || true }).run()
+    async post (pluginConfig, webjerkconfig, results) {
+      if (!this.conf.snapRunRoot || !(await fs.exists(this.conf.snapRunRoot))) {
+        throw new Error('unable to find run images')
+      }
+      var differ = Differ.factory({
+        refDir: this.conf.snapRefRoot,
+        runDir: this.conf.snapRunRoot,
+        report: isNil(pluginConfig.report) ? true : pluginConfig.report
+      })
+      return differ.run()
     }
-  }
+  })
 }

@@ -8,7 +8,6 @@ var without = require('lodash/without')
 var isNil = require('lodash/isNil')
 var fs = require('fs-extra')
 var bb = require('bluebird')
-bb.promisifyAll(fs)
 
 /**
  * executes an image diff test workflow
@@ -46,27 +45,27 @@ Object.assign(ImageSetDiffer.prototype, {
    * Compares all images between ref & run
    * @returns {Promise}
    */
-  compare () {
-    return fs.mkdirpAsync(this.conf.diffDir)
-    .then(() => Promise.all(
-      this._imagePartitions.toCompare.map(basename => {
+  async compare () {
+    await fs.mkdirp(this.conf.diffDir)
+    var diffsAndErrors = await bb.map(
+      this._imagePartitions.toCompare,
+      async basename => {
         var diff = new BlinkDiff(this._createDiffConfig(basename))
-        return bb.promisify(diff.run.bind(diff))()
-        .then(blinkDiff => {
-          if (blinkDiff.differences) {
-            var err = new Error(`${basename} changed beyond allowed allotted threshold`)
-            Object.assign(err, { blinkDiff, basename })
-            return err // NOTE, we are not throwing!  We want all results
-          }
-          return blinkDiff
-        })
-      })
-    ))
-    .then(this._handleCompareResults)
+        var blinkDiff = await bb.promisify(diff.run.bind(diff))()
+        if (blinkDiff.differences) {
+          var err = new Error(`${basename} changed beyond allowed allotted threshold`)
+          Object.assign(err, { blinkDiff, basename })
+          return err // NOTE, we are not throwing!  We want all results
+        }
+        return blinkDiff
+      },
+      { concurrency: 20 }
+    )
+    await this._handleCompareResults(diffsAndErrors)
   },
   _copyRunImagesToRefImages () {
     return Promise.all(this._runBasenames.map(tBasname => {
-      return fs.copyAsync(path.join(this.conf.runDir, tBasname), path.join(this.conf.refDir, tBasname))
+      return fs.copy(path.join(this.conf.runDir, tBasname), path.join(this.conf.refDir, tBasname))
     }))
     .then(() => { this._refBasenames = this._runBasenames })
   },
@@ -96,7 +95,7 @@ Object.assign(ImageSetDiffer.prototype, {
       throw err
     }
     return Promise.all(newImages.map(tBasname => {
-      return fs.copyAsync(
+      return fs.copy(
         path.join(this.conf.runDir, tBasname),
         path.join(this.conf.refDir, tBasname)
       )
@@ -117,15 +116,13 @@ Object.assign(ImageSetDiffer.prototype, {
     Object.assign(this, { _imagePartitions: imagePartitions })
     return imagePartitions
   },
-  readTestState () {
-    return Promise.all([
+  async readTestState () {
+    const [ref, run] = await Promise.all([
       this.conf.refDir,
       this.conf.runDir
-    ].map(f => fs.readdirAsync(f)))
-    .then(([ref, run]) => {
-      this._refBasenames = ref.filter(f => f.match(/\.png$/))
-      this._runBasenames = run.filter(f => f.match(/\.png$/))
-    })
+    ].map(f => fs.readdir(f)))
+    this._refBasenames = ref.filter(f => f.match(/\.png$/))
+    this._runBasenames = run.filter(f => f.match(/\.png$/))
   },
   report (differences) {
     if (!Array.isArray(differences)) throw new Error('missing array of differences')
@@ -137,21 +134,20 @@ Object.assign(ImageSetDiffer.prototype, {
     }))
     return reporter({ differences: enriched, dest: path.join(this.conf.diffDir, 'report') })
   },
-  run () {
-    return bb.resolve()
-    .then(() => this.readTestState())
-    .then(() => this._partitionImageBasenames())
-    .then(partitions => this.validateImagePartitions(partitions))
-    .then(() => this.upsertReferenceImages())
-    .then(() => this._maybeApproveChanges())
-    .then(() => this.compare())
-    .catch(err => {
-      if (err.code !== 'EIMAGEDIFFS') throw err
-      return this.report(err.differences)
-      .then(() => {
-        throw err
-      })
-    })
+  async run () {
+    await this.readTestState()
+    const partitions = await this._partitionImageBasenames()
+    await this.validateImagePartitions(partitions)
+    await this.upsertReferenceImages()
+    await this._maybeApproveChanges()
+    try {
+      await this.compare()
+    } catch (err) {
+      if (err.code === 'EIMAGEDIFFS') {
+        await this.report(err.differences)
+      }
+      throw err
+    }
   },
   upsertReferenceImages () {
     var { newImages } = this._imagePartitions

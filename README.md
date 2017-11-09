@@ -1,3 +1,7 @@
+<div style='width:100%;text-align:center;'>
+  <img src='https://raw.githubusercontent.com/cdaringe/webjerk/master/img/webjerk_banner.png' alt='webjerk-logo' />
+</div>
+
 # webjerk
 
 automation pipeline & plugins in _nodejs_.

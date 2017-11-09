@@ -16,18 +16,21 @@ ava.test.afterEach(async function (params) {
 })
 
 ava('reporter', async t => {
-  var name = 'test-img.png'
   await reporter({
     differences: [
       {
-        name,
-        aFilename: path.join(__dirname, 'case-base', 'ref', name),
-        bFilename: path.join(__dirname, 'case-base', 'run', name)
+        name: 'grumpy.png',
+        aFilename: path.join(__dirname, 'case-base', 'ref', 'grumpy.png'),
+        bFilename: path.join(__dirname, 'case-base', 'run', 'grumpy.png')
+      },
+      {
+        name: 'bub.png',
+        aFilename: path.join(__dirname, 'case-base', 'ref', 'bub.png'),
+        bFilename: path.join(__dirname, 'case-base', 'run', 'bub.png')
       }
     ],
     dest
   })
-  var stat = await fs.lstat(path.join(dest, `a-${name}`))
+  var stat = await fs.lstat(path.join(dest, `a-grumpy`))
   t.truthy(stat, 'static site generated')
-  // fs.remove(dest)
 })

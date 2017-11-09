@@ -1,9 +1,8 @@
 'use strict'
 
 var wj = require('webjerk')
-
-// plugins
 var snaps = require('./plugins/snaps')
+var fs = require('fs-extra')
 
 /**
  * @module snapjerk
@@ -12,23 +11,31 @@ var snaps = require('./plugins/snaps')
 /**
  * snapjerk.
  * @param {object} conf
- * @param {string} conf.testName
  * @param {string} conf.staticDirectory
  * @param {object} conf.snapDefinitions see webjerk-snaps for more
  * @param {function} [conf.snapDefinitionsFromWindow] can be used instead of snap snapDefinitions. see webjerk-snaps for more
  * @param {string[]} [browsers=['chrome']]
  * @returns {Promise}
  */
-function snapjerk (opts) {
+async function snapjerk (opts) {
   if (!opts.staticDirectory) throw new Error('missing staticDirectory')
+  var stat
+  try {
+    stat = await fs.lstat(opts.staticDirectory)
+  } catch (err) {
+    throw new Error(`static directory ${opts.staticDirectory} is invalid`)
+  }
+  if (!stat.isDirectory()) throw new Error(`static directory ${opts.staticDirectory} is not a directory`)
+  if (!opts.snapDefinitions && !opts.snapDefinitionsFromWindow) {
+    throw new Error('snapDefinitions or snapDefinitionsFromWindow required')
+  }
   var conf = Object.assign({}, opts)
   conf.browsers = conf.browsers || ['chrome']
-  var jerkConf = {
+  return wj.run({
     plugins: [
       snaps(conf)
     ]
-  }
-  return wj.run(jerkConf)
+  })
 }
 
 module.exports = snapjerk

@@ -1,3 +1,5 @@
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [ ![Codeship Status for cdaringe/webjerk](https://app.codeship.com/projects/c605af90-fd3d-0134-eab4-1aa2768960b8/status?branch=master)](https://app.codeship.com/projects/212005)
+
 # webjerk-image-set-diff
 
 compares two sets of images.  image sets are PNGs derived from from a user provided folders, `refDir` & `runDir`.  images are compared by basename. that is, `/refDir/test-image.png` would be compared to `/runDir/test-image.png`.

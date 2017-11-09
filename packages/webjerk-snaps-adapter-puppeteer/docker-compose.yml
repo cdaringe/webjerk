@@ -21,7 +21,7 @@ services:
   static:
     image: node:alpine
     volumes:
-      - "${PWD}:/adapter"
+      - "${PROJECT_ROOT}:/adapter"
       - "${STATIC}:/static"
     expose:
       - 3333

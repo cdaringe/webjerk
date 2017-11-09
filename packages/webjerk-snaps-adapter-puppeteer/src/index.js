@@ -51,6 +51,9 @@ module.exports = {
     // return
 
     try {
+      // @TODO move this to dockerode
+      // launch each container seperately, care about exit codes from each.
+      // also, permit _not_ launching the static server!
       await execa(
         'docker-compose',
         [
@@ -74,6 +77,7 @@ module.exports = {
   },
   async dockerCapture () {
     var serializedConf = await fs.readFile(process.env.RELATIVE_CONFIG_FILE)
+    debug(`deserialized snap configuration`)
     var conf = deserialize(serializedConf)
     return this.noButSeriouslyCapture(conf)
   },
@@ -123,5 +127,6 @@ module.exports = {
 }
 
 if (require.main === module) {
+  debug(`webjerk-snaps-adapter-puppeteer execution resumed in docker`)
   module.exports.dockerCapture()
 }

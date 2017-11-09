@@ -1,7 +1,7 @@
 {
   "name": "snapjerk",
   "version": "0.3.0",
-  "description": "connect to sauce, fire up a static server, do some screenshot testing!",
+  "description": "web application screenshot testing in docker",
   "main": "src/index.js",
   "author": "cdaringe",
   "license": "MIT",
@@ -9,7 +9,9 @@
     "axios": "^0.17.0",
     "bluebird": "^3.5.1",
     "debug": "^3.1.0",
+    "fs-extra": "^4.0.2",
     "httpster": "^1.0.3",
+    "meow": "^3.7.0",
     "webjerk": "^0.2.1",
     "webjerk-process-wrangler": "^0.1.13",
     "webjerk-snaps": "^0.2.1"

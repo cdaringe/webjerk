@@ -7,17 +7,29 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceRoot}/src/index.js",
-      "outFiles": []
+      "name": "bin",
+      "program": "${workspaceRoot}/src/bin.js",
+      "skipFiles": [
+        "<node_internals>/**/*.js"
+      ]
     },
     {
       "type": "node",
-      "request": "attach",
-      "name": "Attach to Process",
-      "address": "localhost",
-      "port": 5858,
-      "outFiles": []
+      "request": "launch",
+      "name": "bin w/ test config",
+      "program": "${workspaceRoot}/src/bin.js",
+      "args": [
+        "--config",
+        "test/snap.test.config.js",
+        "-d",
+        "[{ elem: 'body', name: 'body' }]"
+      ],
+      "env": {
+        "DEBUG": "webjerk*"
+      },
+      "skipFiles": [
+        "<node_internals>/**/*.js"
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
-<div style='width:100%;text-align:center;'>
+<p align="center">
   <img src='https://raw.githubusercontent.com/cdaringe/webjerk/master/img/webjerk_banner.png' alt='webjerk-logo' />
-</div>
+</p>
 
 # webjerk
 

@@ -72,6 +72,7 @@ async function docs () {
   await fs.copy(gfmCSSPath, path.join(docsPath, 'github-markdown.css'))
 
   // publish.
+  if (process.env.DEBUG) return console.log('DEBUG - skipping publish')
   try {
     await util.promisify(ghpages.publish).bind(ghpages)(docsPath)
   } finally {

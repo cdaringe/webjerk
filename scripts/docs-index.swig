@@ -57,8 +57,11 @@ ul.first-column {
   overflow: scroll;
   padding: 30px 20px;
 }
+iframe {
+  border: 0;
+}
     </style>
-    <script src='https://code.jquery.com/jquery-3.2.1.slim.min.js'></script>
+    <script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
     <script>
 var state = {
   path: 'home'
@@ -72,15 +75,15 @@ function init () {
     lis.forEach(function (li) {
       if (li.attributes.name.value == name) li.classList.add('selected')
       else li.classList.remove('selected')
-      if (name.match(/home/)) {
-        $apiContent.hide()
-        $homeContent.show()
-      } else {
-        $homeContent.hide()
-        $apiContent.show()
-        $apiContent.attr('src', name)
-      }
     })
+    if (name.match(/home/)) {
+      $apiContent.hide()
+      $homeContent.show()
+    } else {
+      $homeContent.hide()
+      $apiContent.fadeIn()
+      $apiContent.attr('src', `${window.location.origin}/webjerk/${name}/index.html`)
+    }
   }
 }
 
@@ -104,7 +107,7 @@ document.addEventListener('DOMContentLoaded', init)
     <iframe
       id='api-content'
       class='second-column'
-      sandbox='allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation'
+      referrerpolicy='unsafe-url'
       style="display:none;">
     </iframe>
     <div id='home-content' class='second-column'>
@@ -118,6 +121,7 @@ document.addEventListener('DOMContentLoaded', init)
     <a
       href="https://github.com/cdaringe/webjerk/"
       class="github-corner"
+      target="_blank"
       aria-label="View source on Github"
     >
       <svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">

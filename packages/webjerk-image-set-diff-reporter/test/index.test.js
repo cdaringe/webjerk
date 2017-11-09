@@ -31,6 +31,6 @@ ava('reporter', async t => {
     ],
     dest
   })
-  var stat = await fs.lstat(path.join(dest, `a-grumpy`))
+  var stat = await fs.lstat(path.join(dest, `a-grumpy.png`))
   t.truthy(stat, 'static site generated')
 })

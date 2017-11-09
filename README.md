@@ -10,15 +10,13 @@ automation pipeline & plugins in _nodejs_.
 
 ## description
 
-webjerk is a simple stupid, <200 LOC pipeline runner.  just what we needed.  YAPR (yet another pipeline runner).
+webjerk is a simple stupid pipeline runner.  just what we needed.  YAPR (yet another pipeline runner).
 
 webjerk has a 3 phase lifecycle: `pre`, `main`, `post`.
 
 webjerk accepts plugins to register with it, and it runs those plugins.
 
-## what can it do that's cool?
-
-"this sounds lame. the README is waaay to small for this to be a usuable project. can it even do anything cool?"
+## can it do anything cool?
 
 no. but its plugins can!
 

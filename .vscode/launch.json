@@ -16,8 +16,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceRoot}/scripts/publish.js"
+      "name": "launch file",
+      "program": "${file}"
     }
   ]
 }

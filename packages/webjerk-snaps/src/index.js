@@ -10,20 +10,22 @@ var DEFAULT_WINDOW_EXEC =  function () { return {}; } // eslint-disable-line
 
 /**
  * @typedef SnapsConfig
- * @property {Number} [runId=Date.now()]
  * @property {string} staticDirectory
+ * @property {Number} [runId=Date.now()]
  * @property {string} [url]
  * @property {string[]} [snapDefinitions]
  * @property {function} [snapDefinitionsFromWindow]
  * @property {string} [snapRunRoot=`pwd`/snaps/run]
  * @property {string} [snapRefRoot=`pwd`/snaps/ref]
+ * @property {boolean} [report=true] generate a static web-application to
+ * highlight image changes. report will be placed into snaps/run/<run-id>-diff
  */
 
 /**
  * @module webjerk-snaps
- * @description website visual regression testing plugin.  on `main`,
- * webjerk-snaps queues up browsers to be run serially. each browser is
- * launched, screenshots captured. on `post`, the image directories are sent to
+ * @description website visual regression testing plugin.  on webjerk's `main` cycle,
+ * webjerk-snaps launches an adapter to _capture_ snaps. after snaps are captured,
+ * the image directories (this run's image dir & the reference image dir) are sent to
  * `webjerk-image-set-diff` for executing the comparison algorithm.
  */
 module.exports = function registerSnaps () {

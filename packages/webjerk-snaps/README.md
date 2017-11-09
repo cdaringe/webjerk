@@ -6,9 +6,11 @@ website visual regression testing.
 
 this package:
 
-- browses to a webpage via selenium
-- screenshots targeted CSS selectors, generating PNGs
-- creates a new reference image set _or_ compares the new set to a reference set
+- takes user input for a [snapjerk](https://github.com/cdaringe/webjerk/tree/master/packages/snapjerk) execution, and injects sensible defaults
+- launches some-sort-browser adapter to capture screenshots
+  - the *_only current supported adapter_* is [webjerk-snaps-adapter-puppeteer](https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-snaps-adapter-puppeteer).
+  - the [saucelabs adapter](https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-saucie) needs rework!
+- creates a new reference image set _or_ compares the captured images to a reference set
   - on comparison failure (optionally) [generates a static website highlighting the failed comparisons](https://github.com/cdaringe/webjerk-image-set-diff-reporter).  this is handy if you you want your CI to deploy the site somewhere for public viewing.
 
 this type of testing is somtimes also called CSS testing or screenshot testing.

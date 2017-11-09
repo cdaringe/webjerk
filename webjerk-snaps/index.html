@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Home - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-webjerk-snaps.html">webjerk-snaps</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~main">main</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~post">post</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><p><a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="JavaScript Style Guide"></a> <a href="https://app.codeship.com/projects/212005"> <img src="https://app.codeship.com/projects/c605af90-fd3d-0134-eab4-1aa2768960b8/status?branch=master" alt="Codeship Status for cdaringe/webjerk"></a></p>
+<h1>webjerk-snaps</h1><p>website visual regression testing.</p>
+<p>this package:</p>
+<ul>
+<li>takes user input for a <a href="https://github.com/cdaringe/webjerk/tree/master/packages/snapjerk">snapjerk</a> execution, and injects sensible defaults</li>
+<li>launches some-sort-browser adapter to capture screenshots<ul>
+<li>the <em><em>only current supported adapter</em></em> is <a href="https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-snaps-adapter-puppeteer">webjerk-snaps-adapter-puppeteer</a>.</li>
+<li>the <a href="https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-saucie">saucelabs adapter</a> needs rework!</li>
+</ul>
+</li>
+<li>creates a new reference image set <em>or</em> compares the captured images to a reference set<ul>
+<li>on comparison failure (optionally) <a href="https://github.com/cdaringe/webjerk-image-set-diff-reporter">generates a static website highlighting the failed comparisons</a>.  this is handy if you you want your CI to deploy the site somewhere for public viewing.</li>
+</ul>
+</li>
+</ul>
+<p>this type of testing is somtimes also called CSS testing or screenshot testing.</p>
+<p>don't like the way this package works?  hack it!  all things <code>webjerk</code> are small and modular.  feel free to drop us an issue on GitHub with questions &amp; comments too!</p>
+<h2>usage</h2><p><a href="https://cdaringe.github.io/webjerk-snaps/index.html">API documentation lives here</a>.</p>
+<ul>
+<li>to get image baselines, create a config and run. see the <code>#example</code> section</li>
+<li>run it!<ul>
+<li>all image <strong>basenames</strong> that are <em>not</em> present in the reference set become part of the reference set.</li>
+</ul>
+</li>
+<li>subsequent runs compare against these images</li>
+</ul>
+<h2>example</h2><pre class="prettyprint source lang-js"><code>// test.js
+'use strict'
+
+var wj = require('webjerk')
+
+wj.run({
+  plugins: [
+    {
+      name: 'webjerk-snaps',
+      config: {
+        desiredCapabilities: [ // see webdriverio or selenium docs!
+          { browserName: 'chrome' },
+          { browserName: 'firefox' }
+        ],
+        url: 'http://localhost:3333', // what page to extract snaps from
+        testName: 'screenshot-all-divs',
+        snapDefinitions: [{ elem: 'div', name: 'best div' }], // OR,
+        snapDefinitionsFromWindow: function queryDivSnapDefinitions (divs, message) {
+          // @NOTE this JS is run in the _browser_ context
+          // webdriverio JS serialziation requires semis. :/
+          var divs = document.getElementsByTagName('div');
+          var map = [];
+          var i = 0;
+          var tDiv;
+          while (divs[i]) {
+            tDiv = divs[i];
+            if (!tDiv.id) tDiv.id = '__dummy_div_' + i;
+            map.push({ elem: '#' + tDiv.id, name: tDiv.id });
+            ++i;
+          }
+          return map;
+        }
+      }
+    }
+  ]
+})</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

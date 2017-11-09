@@ -20,7 +20,8 @@
     "postinstall": "lerna bootstrap",
     "publish:lerna": "lerna publish",
     "publish:retry": "node scripts/publish",
-    "test": "lerna run test --stream"
+    "test": "lerna run test --stream",
+    "docs": "node scripts/docs"
   },
   "dependencies": {
     "gh-pages": "^1.0.0",

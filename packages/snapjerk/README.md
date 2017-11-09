@@ -46,7 +46,7 @@ specifically, it:
 
 ### library
 
-[API documentation lives here](https://cdaringe.github.io/snapjerk/index.html).
+[API documentation lives here](https://cdaringe.github.io/webjerk/snapjerk/index.html).
 
 ```js
 var snapjerk = require('snapjerk')

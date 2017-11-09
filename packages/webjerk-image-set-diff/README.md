@@ -2,7 +2,7 @@
 
 # webjerk-image-set-diff
 
-compares two sets of images.  image sets are PNGs derived from from a user provided folders, `refDir` & `runDir`.  images are compared by basename. that is, `/refDir/test-image.png` would be compared to `/runDir/test-image.png`.
+compares two sets of images.  provide it folders, `refDir` & `runDir`, where both folders contain `png` files.  images are compared by basename. that is, `/refDir/test-image.png` would be compared to `/runDir/test-image.png`.
 
 the comparisons use [blink-diff](https://github.com/yahoo/blink-diff) to compare images.
 
@@ -19,11 +19,13 @@ var idr = new ImageSetDiffer({
   allowNewImages: true, // allow new images into the ref set
   approveChanges: false // appove run images as new refs. migrate run/ images to ref/
 })
-idr.run()
-.then(...) // resolves a set of blinkDifference results
+var diffs = await idr.run() // blinkDifference objects
 ```
 
-when there are mismatches, an `ImageSetDiffer` instance throws.  `err.code` will equal `'EIMAGEDIFFS'`. more interestingly, `err.differences` will have an array of the blink difference data attached to the failing image.
+when mismatches are detected, `ImageSetDiffer::run` throws.
+
+- `err.code` will equal `'EIMAGEDIFFS'`
+- `err.differences` will have an array of blink difference data attached to the failing image
 
 ```js
 console.log(err.differences)
@@ -34,5 +36,5 @@ console.log(err.differences)
 
 some settings may be set from the env:
 
-- `WEBJERK_ALLOW_NEW_IMAGES`, empty string ~false, anything else, ~true
-- `WEBJERK_APPROVE_CHANGES`, empty string ~false, anything else, ~true
+- `WEBJERK_ALLOW_NEW_IMAGES`, set to allow new images not found in the reference set
+- `WEBJERK_APPROVE_CHANGES`, set to approve all image changes

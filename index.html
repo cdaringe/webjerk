@@ -78,6 +78,7 @@ function init () {
       } else {
         $homeContent.hide()
         $apiContent.show()
+        debugger
         $apiContent.attr('src', `${window.location.href}/${name}`)
       }
     })
@@ -140,7 +141,7 @@ document.addEventListener('DOMContentLoaded', init)
       id='api-content'
       class='second-column'
       referrerpolicy='unsafe-url'
-      sandbox='allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts'
+      sandbox='allow-popups allow-popups-to-escape-sandbox allow-same-origin'
       style="display:none;">
     </iframe>
     <div id='home-content' class='second-column'>

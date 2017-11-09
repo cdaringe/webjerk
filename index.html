@@ -82,7 +82,7 @@ function init () {
     } else {
       debugger
       $homeContent.hide()
-      $apiContent.attr('src', `${window.location.href}${name}`)
+      $apiContent.attr('src', `${window.location.origin}/webjerk/${name}`)
       $apiContent.show()
     }
   }

@@ -78,7 +78,7 @@ function init () {
       } else {
         $homeContent.hide()
         $apiContent.show()
-        $apiContent.attr('src', `/webjerk/${name}`)
+        $apiContent.attr('src', `${window.location.href}/${name}`)
       }
     })
   }

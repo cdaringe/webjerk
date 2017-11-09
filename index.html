@@ -57,6 +57,9 @@ ul.first-column {
   overflow: scroll;
   padding: 30px 20px;
 }
+iframe {
+  border: 0;
+}
     </style>
     <script src='https://code.jquery.com/jquery-3.2.1.slim.min.js'></script>
     <script>
@@ -72,16 +75,16 @@ function init () {
     lis.forEach(function (li) {
       if (li.attributes.name.value == name) li.classList.add('selected')
       else li.classList.remove('selected')
-      if (name.match(/home/)) {
-        $apiContent.hide()
-        $homeContent.show()
-      } else {
-        $homeContent.hide()
-        $apiContent.show()
-        debugger
-        $apiContent.attr('src', `${window.location.href}/${name}`)
-      }
     })
+    if (name.match(/home/)) {
+      $apiContent.hide()
+      $homeContent.show()
+    } else {
+      debugger
+      $homeContent.hide()
+      $apiContent.attr('src', `${window.location.href}/${name}`)
+      $apiContent.show()
+    }
   }
 }
 

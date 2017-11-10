@@ -128,7 +128,10 @@ module.exports = {
       )
       puppeteerServer.attach(
         { stream: true, stdout: true, stderr: true },
-        (err, stream) => stream.pipe(process.stdout) // eslint-disable-line
+        (err, stream) => {
+          if (err) throw err
+          stream.pipe(process.stdout) // eslint-disable-line
+        }
       )
       await puppeteerServer.wait()
       await fs.remove(conf.snapRunRoot)

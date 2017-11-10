@@ -12,7 +12,7 @@ ava.test.beforeEach(async function (params) {
 })
 
 ava.test.afterEach(async function (params) {
-  await fs.remove(dest)
+  if (!process.env.DEBUG) await fs.remove(dest)
 })
 
 ava('reporter', async t => {

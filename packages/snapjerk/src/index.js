@@ -10,10 +10,10 @@ var fs = require('fs-extra')
 
 /**
  * snapjerk.
- * @param {object} conf
- * @param {string} conf.staticDirectory
- * @param {object} conf.snapDefinitions see webjerk-snaps for more
- * @param {function} [conf.snapDefinitionsFromWindow] can be used instead of snap snapDefinitions. see webjerk-snaps for more
+ * @param {object} opts
+ * @param {string} opts.staticDirectory
+ * @param {object} opts.snapDefinitions see webjerk-snaps for more
+ * @param {function} [opts.snapDefinitionsFromWindow] can be used instead of snap snapDefinitions. see webjerk-snaps for more
  * @param {string[]} [browsers=['chrome']]
  * @returns {Promise}
  */

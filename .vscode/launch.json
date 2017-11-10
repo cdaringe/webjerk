@@ -6,12 +6,31 @@
   "configurations": [
     {
       "type": "node",
-      "request": "attach",
-      "name": "Attach",
-      "port": 9229,
+      "request": "launch",
+      "name": "test - snapjerk",
+      "program": "${workspaceRoot}/node_modules/ava/profile.js",
+      "args": [
+        "${workspaceRoot}/packages/snapjerk/test/index.test.js"
+      ],
       "skipFiles": [
         "<node_internals>/**/*.js"
-      ]
+      ],
+      "env": {
+        "DEBUG": "webjerk*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "attach - snapjerk",
+      "port": 9230,
+      "skipFiles": [
+        "<node_internals>/**/*.js"
+      ],
+      "restart": false,
+      "sourceMaps": false,
+      "localRoot": "${workspaceRoot}/packages/snapjerk",
+      "remoteRoot": "/app/adapter"
     },
     {
       "type": "node",

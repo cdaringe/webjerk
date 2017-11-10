@@ -25,7 +25,7 @@ class App extends Component {
         <p className='content'>
           {(this.state.diffs || []).map((diff, i) => {
             return (
-              <div>
+              <div id={`diff-${i}`}>
                 <h4>{diff.name}</h4>
                 <SlideyThing diff={diff} />
               </div>

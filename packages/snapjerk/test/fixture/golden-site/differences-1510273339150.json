@@ -1,0 +1,12 @@
+[
+  {
+    "name": "grumpy.png",
+    "aFilename": "/Users/cdieringer/node/webjerk/packages/webjerk-image-set-diff-reporter/test/case-base/ref/grumpy.png",
+    "bFilename": "/Users/cdieringer/node/webjerk/packages/webjerk-image-set-diff-reporter/test/case-base/run/grumpy.png"
+  },
+  {
+    "name": "bub.png",
+    "aFilename": "/Users/cdieringer/node/webjerk/packages/webjerk-image-set-diff-reporter/test/case-base/ref/bub.png",
+    "bFilename": "/Users/cdieringer/node/webjerk/packages/webjerk-image-set-diff-reporter/test/case-base/run/bub.png"
+  }
+]

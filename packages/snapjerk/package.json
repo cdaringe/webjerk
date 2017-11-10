@@ -21,13 +21,12 @@
     "url": "https://github.com/cdaringe/webjerk"
   },
   "devDependencies": {
-    "jsdock": "^1.0.3",
-    "resolve-jsdoc-bin": "^1.0.0"
+    "ava": "^0.23.0"
   },
   "scripts": {
     "docs:build": "jsdock build",
     "docs:publish": "jsdock publish",
     "postpublish": "npm run docs-publish",
-    "test": "echo 'see webjerk tests'"
+    "test": "ava test/*.test.js"
   }
 }

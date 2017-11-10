@@ -5,6 +5,7 @@
 var snapjerk = require('./index')
 var meow = require('meow')
 var path = require('path')
+var debug = require('debug')('webjerk:snapjerk:bin')
 
 var conf = {}
 
@@ -49,5 +50,6 @@ if (snapDefinitions) {
   }
   conf.snapDefinitions = snapDefinitions
 }
+debug('snapjerk bin config:', conf)
 
 snapjerk(conf)

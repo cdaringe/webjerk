@@ -7,6 +7,7 @@ var path = require('path')
 var debug = require('debug')('webjerk:snaps-adapter-puppeteer')
 var bb = require('bluebird')
 var Docker = require('dockerode')
+const execa = require('execa')
 var docker = new Docker()
 
 function deserialize (serializedJavascript) {
@@ -25,11 +26,11 @@ module.exports = {
   async capture (conf) {
     var projectRoot = path.resolve(__dirname, '..')
     var serializedConf = serialize(conf)
-    await Promise.all(
-      (await fs.readdir(__dirname))
-      .filter(folder => folder.match(/tmp-/))
-      .map(folder => fs.remove(path.join(__dirname, folder)))
-    )
+    // await Promise.all(
+    //   (await fs.readdir(__dirname))
+    //   .filter(folder => folder.match(/tmp-/))
+    //   .map(folder => fs.remove(path.join(__dirname, folder)))
+    // )
     var tempDir = path.resolve(__dirname, `.tmp-${Math.random()}`)
     var tempStaticDir = path.resolve(tempDir, 'static')
     var tempFile = path.join(tempDir, 'capture-config.js')
@@ -42,14 +43,6 @@ module.exports = {
     var tempDirRelative = path.relative(projectRoot, tempDir)
     var tempFileRelative = path.relative(projectRoot, tempFile)
     var tempSnapsRunDirRelative = path.relative(projectRoot, tempSnapsRunDir)
-    // const env = Object.assign({}, process.env, {
-    //   ENTRY: thisFileRelative,
-    //   PROJECT_ROOT: projectRoot,
-    //   RELATIVE_CONFIG_FILE: tempFileRelative,
-    //   RELATIVE_RESULTS_DIR: tempDirRelative,
-    //   RELATIVE_SNAPS_RUN_DIR: tempSnapsRunDirRelative,
-    //   STATIC: tempStaticDir
-    // })
 
     /**
      * local puppeteer debuggins only!
@@ -67,6 +60,12 @@ module.exports = {
     var network = await docker.createNetwork({
       Name: networkName
     })
+    debug('pulling images')
+    await Promise.all([
+      execa('docker', ['pull', 'node']),
+      execa('docker', ['pull', 'zenato/puppeteer-renderer'])
+    ])
+    debug('images pulled')
     var staticServer = await docker.createContainer({
       Hostname: 'static',
       Image: 'node',
@@ -113,21 +112,14 @@ module.exports = {
         Binds: [
           `${projectRoot}:/app/adapter` // image's node_modules are in /app. use 'em
         ],
-        PortBindings: {
-          '9229/tcp': isDebugPup
-            ? [ { HostPort: '9230' } ]
-            : []
-        },
         NetworkMode: networkName
-      },
-      ExposedPorts: {
-        '9229/tcp': {}
       }
     })
     try {
-      await staticServer.start()
-      await bb.delay(3000)
-      await puppeteerServer.start()
+      await Promise.all([
+        staticServer.start(),
+        puppeteerServer.start()
+      ])
       await puppeteerServer.wait()
       await fs.remove(conf.snapRunRoot)
       debug(`copying \n\t${tempSnapsRunDir}\n\t${conf.snapRunRoot}`)

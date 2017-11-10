@@ -52,5 +52,5 @@ jobs:
       # run tests!
       - run: docker network prune --force
       - run: npm run lint
-      - run: DEBUG=webjerk* npm test
+      - run: DEBUG=webjerk* npm test -- --verbose
 

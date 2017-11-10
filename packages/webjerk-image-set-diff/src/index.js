@@ -8,6 +8,7 @@ var without = require('lodash/without')
 var isNil = require('lodash/isNil')
 var fs = require('fs-extra')
 var bb = require('bluebird')
+var debug = require('debug')('webjerk:image-set-diff')
 
 /**
  * executes an image diff test workflow
@@ -64,6 +65,8 @@ Object.assign(ImageSetDiffer.prototype, {
     await this._handleCompareResults(diffsAndErrors)
   },
   _copyRunImagesToRefImages () {
+    console.log('no reference images found. setting reference images from run.')
+    debug('images using as ref:', this._runBasenames)
     return Promise.all(this._runBasenames.map(tBasname => {
       return fs.copy(path.join(this.conf.runDir, tBasname), path.join(this.conf.refDir, tBasname))
     }))
@@ -157,7 +160,6 @@ Object.assign(ImageSetDiffer.prototype, {
       if (newImages.length) return this._handleNewImages()
       return Promise.resolve()
     }
-    console.log('no reference images found. setting reference images from run.')
     return this._copyRunImagesToRefImages()
   },
   validateImagePartitions ({ missingImages, toCompare, newImages }) {

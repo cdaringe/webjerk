@@ -25,7 +25,7 @@ ava.afterEach(async t => {
   await fs.remove(t.context.siteDir)
 })
 
-ava('generates reference set', async function (t) {
+ava.serial('generates reference set', async function (t) {
   var snapRunRoot = path.join(t.context.siteDir, 'snaps/run')
   var snapRefRoot = path.join(t.context.siteDir, 'snaps/ref')
   await snapjerk({

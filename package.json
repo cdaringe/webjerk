@@ -14,6 +14,7 @@
     "husky": "^0.14.3",
     "lerna": "2.0.0-beta.38",
     "lint-staged": "^4.3.0",
+    "npm-run-all": "^4.1.2",
     "perish": "^1.0.1",
     "prettier-standard": "^7.0.3",
     "standard": "^10.0.0"
@@ -24,7 +25,8 @@
     "publish:lerna": "lerna publish",
     "publish:retry": "node scripts/publish",
     "test": "lerna run test --stream",
-    "docs": "node scripts/docs"
+    "docs": "node scripts/docs",
+    "precommit": "run-p lint test"
   },
   "dependencies": {
     "gh-pages": "^1.0.0",

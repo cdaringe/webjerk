@@ -50,6 +50,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
+      - run: docker network prune --force
       - run: npm run lint
       - run: DEBUG=webjerk* npm test
 

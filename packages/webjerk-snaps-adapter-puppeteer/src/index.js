@@ -71,6 +71,7 @@ module.exports = {
       Image: 'node',
       Cmd: ['node', '/adapter/node_modules/.bin/httpster', '-d', '/static'],
       HostConfig: {
+        AutoRemove: true,
         Binds: [
           `${projectRoot}:/adapter`,
           `${tempStaticDir}:/static`
@@ -109,6 +110,7 @@ module.exports = {
       ],
       WorkingDir: '/app/adapter',
       HostConfig: {
+        AutoRemove: true,
         Binds: [
           `${projectRoot}:/app/adapter` // image's node_modules are in /app. use 'em
         ],
@@ -130,10 +132,6 @@ module.exports = {
       await Promise.all([
         permitFail(() => staticServer.stop()),
         permitFail(() => puppeteerServer.stop())
-      ])
-      await Promise.all([
-        staticServer.remove(),
-        puppeteerServer.remove()
       ])
       await network.remove()
     }

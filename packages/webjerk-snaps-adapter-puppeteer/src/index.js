@@ -1,7 +1,6 @@
 'use strict'
 
 require('perish')
-var execa = require('execa')
 var fs = require('fs-extra')
 var serialize = require('serialize-javascript')
 var path = require('path')
@@ -76,15 +75,7 @@ module.exports = {
         Binds: [
           `${projectRoot}:/adapter`,
           `${tempStaticDir}:/static`
-        ],
-        // PortBindings: {
-        //   '3333/tcp': [
-        //     {
-        //       HostPort: '4444'
-        //     }
-        //   ]
-        // },
-        // NetworkMode: networkName
+        ]
       },
       ExposedPorts: {
         '3333/tcp': {}

@@ -2,12 +2,10 @@
 
 const ava = require('ava').default
 const path = require('path')
-const execa = require('execa')
 const fs = require('fs-extra')
 const os = require('os')
 const snapjerk = require('../src/index')
 
-var snapjerkBin = path.resolve(__dirname, '../src/bin.js')
 var goldenSite = path.resolve(__dirname, 'fixture', 'golden-site')
 var goldenSnaps = [
   { elem: '#diff-0', name: 'grumpy' },

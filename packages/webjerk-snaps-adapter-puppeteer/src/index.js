@@ -122,6 +122,14 @@ module.exports = {
         staticServer.start(),
         puppeteerServer.start()
       ])
+      staticServer.attach(
+        { stream: true, stdout: true, stderr: true },
+        (err, stream) => stream.pipe(process.stdout) // eslint-disable-line
+      )
+      puppeteerServer.attach(
+        { stream: true, stdout: true, stderr: true },
+        (err, stream) => stream.pipe(process.stdout) // eslint-disable-line
+      )
       await puppeteerServer.wait()
       await fs.remove(conf.snapRunRoot)
       debug(`copying \n\t${tempSnapsRunDir}\n\t${conf.snapRunRoot}`)

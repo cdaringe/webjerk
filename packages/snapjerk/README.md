@@ -68,7 +68,12 @@ changes come in three forms:
 
 for more on the image diffing and approval processes, see (webjerk-image-set-diff)[https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-image-set-diff].
 
-# why?
+## debug
+
+- set `DEBUG=webjerk*` to enable verbose logging
+- `node --inspect-brk node_modules/.bin/snapjerk`, just like any other old node process :)
+
+## why?
 
 great options out there for testing visual diffs in browsers are slim.  i've
 drawn the conclusion that most people roll their own image snap and comparison
@@ -86,3 +91,18 @@ this project aims to sceenshot testing really easy.  by easy, i mean:
 the nearest thing to this project is  (BackstopJS)[https://github.com/garris/BackstopJS].  it's great!  it's more comprehensive
 than this package, but also brings with it more complexity.  give it a shot if
 snapjerk doesn't work out for you.
+
+## arch
+
+just in case you cared to know.  happy hacking.
+
+<img src='https://raw.githubusercontent.com/cdaringe/webjerk/master/img/arch.png' alt='snapjerk-arch' />
+
+- `snapjerk` digests user config & instantiates the `webjerk-snaps` plugin
+- `snapjerk` registers the `webjerk-snaps` plugin instance with `webjerk`, and runs `webjerk`
+- `webjerk` runs the `main` and `post` hooks on `webjerk-snaps`
+  - `main` boots the browser in docker and takes screenshot
+  - `post` generates a diff report (optionally)
+- unwind & exit
+
+easy peasy.

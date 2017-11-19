@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "description": "web application screenshot testing in docker",
   "main": "src/index.js",
+  "bin": "src/bin.js",
   "author": "cdaringe",
   "license": "MIT",
   "dependencies": {

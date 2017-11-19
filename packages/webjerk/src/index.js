@@ -23,13 +23,13 @@ module.exports = {
     var mainLifecycleResults
     var postLifecycleResults
     try {
-      preLifecycleResults = await lifecycle('pre')(config)
-      mainLifecycleResults = await lifecycle('main')(config)
+      preLifecycleResults = await lifecycle.register('pre')(config)
+      mainLifecycleResults = await lifecycle.register('main')(config)
     } catch (err) {
       errs.push(err) // fail gracefully, allowing post to cleanup
     }
     try {
-      postLifecycleResults = await lifecycle('post')(config)
+      postLifecycleResults = await lifecycle.register('post')(config)
     } catch (err) {
       errs.push(err) // fail gracefully, allowing post to cleanup
     }

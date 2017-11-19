@@ -23,6 +23,7 @@ async function snapjerk (opts) {
   try {
     stat = await fs.lstat(opts.staticDirectory)
   } catch (err) {
+    console.error(err)
     throw new Error(`static directory ${opts.staticDirectory} is invalid`)
   }
   if (!stat.isDirectory()) throw new Error(`static directory ${opts.staticDirectory} is not a directory`)

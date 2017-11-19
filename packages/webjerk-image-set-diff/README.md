@@ -2,7 +2,9 @@
 
 # webjerk-image-set-diff
 
-compares two sets of images.  provide it folders, `refDir` & `runDir`, where both folders contain `png` files.  images are compared by basename. that is, `/refDir/test-image.png` would be compared to `/runDir/test-image.png`.
+compares two sets of images.
+
+provide it folders, `refDir` & `runDir`, where both folders contain `png` files.  images are compared by basename. that is, `/refDir/test-image.png` would be compared to `/runDir/test-image.png`.
 
 the comparisons use [blink-diff](https://github.com/yahoo/blink-diff) to compare images.
 

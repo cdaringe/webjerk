@@ -23,15 +23,17 @@ async function executeLifecycleHooks (config, lifecycle) {
   return results
 }
 
-module.exports = function registerLifecycle (lifecycle) {
-  debug(`registering "${lifecycle}"`)
-  return async function execLifecycle (config) {
-    if (lifecycle === 'pre') await plugins.fromConfig(config) // register all plugins
-    try {
-      await executeLifecycleHooks(config, lifecycle)
-    } catch (err) {
-      debug(`failed to execute "${lifecycle}`)
-      throw err
+module.exports = {
+  register (lifecycleName) {
+    debug(`registering "${lifecycleName}"`)
+    return async function execLifecycle (config) {
+      if (lifecycleName === 'pre') await plugins.fromConfig(config) // register all plugins
+      try {
+        await executeLifecycleHooks(config, lifecycleName)
+      } catch (err) {
+        debug(`failed to execute "${lifecycleName}`)
+        throw err
+      }
     }
   }
 }

@@ -61,11 +61,12 @@ module.exports = {
       Name: networkName
     })
     debug('pulling images')
+    var cpConf = debug.enabled ? { stdio: 'inherit' } : {}
     await Promise.all([
-      execa('docker', ['pull', 'node']),
-      execa('docker', ['pull', 'zenato/puppeteer-renderer'])
+      execa('docker', ['pull', 'node'], cpConf),
+      execa('docker', ['pull', 'zenato/puppeteer-renderer'], cpConf)
     ])
-    debug('images pulled')
+    debug('nodjes & puppeteer docker images pulled')
     var staticServer = await docker.createContainer({
       Hostname: 'static',
       Image: 'node',
@@ -166,7 +167,7 @@ module.exports = {
     })
     const page = await browser.newPage()
     debug(`puppeteer browsing to ${conf.url}`)
-    await page.goto(conf.url, { waitUntil: 'networkidle' })
+    await page.goto(conf.url, { waitUntil: 'networkidle2' }) // really? networkidle...2?
     if (!snapDefinitions && snapDefinitionsFromWindow) {
       snapDefinitions = await page.evaluate(snapDefinitionsFromWindow)
     }
@@ -180,7 +181,7 @@ module.exports = {
       })
       var handle = await page.$(snapDefinition.elem)
       var targetPng = path.join(process.env.RELATIVE_SNAPS_RUN_DIR, `${snapDefinition.name}-chrome.png`)
-      debug(`sceenshotting ${snapDefinition.elem} ${targetPng}`)
+      debug(`screenshotting ${snapDefinition.elem} ${targetPng}`)
       await handle.screenshot({
         path: targetPng,
         type: 'png'

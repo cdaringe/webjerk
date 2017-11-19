@@ -28,8 +28,11 @@ Options
 
 var configFilename = (cli.flags.c || cli.flags.config) ? path.resolve(cli.flags.c || cli.flags.config) : null
 try {
-  conf = require(configFilename || './snapjerk.config.js')
+  debug(`checking for config file: ${configFilename || './snapjerk.config.js'}`)
+  conf = require(configFilename || path.resolve(process.cwd(), './snapjerk.config.js'))
+  debug(`config file found:`, conf)
 } catch (err) {
+  debug(`config file not found`)
   if (configFilename) throw new Error(`config file ${configFilename} invalid`)
   // pass
 }
@@ -50,6 +53,6 @@ if (snapDefinitions) {
   }
   conf.snapDefinitions = snapDefinitions
 }
-debug('snapjerk bin config:', conf)
+debug('snapjerk final config:', conf)
 
 snapjerk(conf)

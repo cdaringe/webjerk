@@ -110,7 +110,8 @@ easy peasy.
 # faq
 
 - _"what browsers are supported?"_
-  - ATM, _just chrome_.  this package used to support firefox, but in efforts remove the complexity and overhead of selenium, browser driver wrappers have been removed.
+  - ATM, _just chrome_.  this package used to support firefox, but in efforts to remove complexity and the overhead of selenium, it has been removed.
+    - we now use an adapter based strategy.
   - PRs to make a firefox/[slimer](https://github.com/laurentj/slimerjs)/etc adapter would be accepted!
 - _"how do i navigate, or, do <some-action-in-the-browser> to get to the element i need to screenshot?"_
-  - you can pass code to be evaluated on your page prescreenshot. see the `onPreSnap`/`onPostSnap` options.
+  - see the `SnapsConfig.onPreSnap`/`SnapsConfig.onPostSnap` options

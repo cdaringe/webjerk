@@ -19,7 +19,7 @@
         "--config",
         "test/snap.test.config.js",
         "-d",
-        "[{ elem: 'body', name: 'body' }]"
+        "[{ selector: 'body', name: 'body' }]"
       ],
       "env": {
         "DEBUG": "webjerk*"

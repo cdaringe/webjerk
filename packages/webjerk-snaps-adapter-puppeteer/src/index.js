@@ -175,17 +175,19 @@ module.exports = {
     debug('capturing snaps')
     for (var i in snapDefinitions) {
       var snapDefinition = snapDefinitions[i]
-      debug('capturing snap:', snapDefinition.elem)
-      await page.waitFor(snapDefinition.elem, {
+      if (snapDefinition.onPreSnap) await snapDefinition.onPreSnap(snapDefinition, 'chrome', browser)
+      debug('capturing snap:', snapDefinition.selector)
+      await page.waitFor(snapDefinition.selector, {
         timeout: 2000
       })
-      var handle = await page.$(snapDefinition.elem)
+      var handle = await page.$(snapDefinition.selector)
       var targetPng = path.join(process.env.RELATIVE_SNAPS_RUN_DIR, `${snapDefinition.name}-chrome.png`)
-      debug(`screenshotting ${snapDefinition.elem} ${targetPng}`)
+      debug(`screenshotting ${snapDefinition.selector} ${targetPng}`)
       await handle.screenshot({
         path: targetPng,
         type: 'png'
       })
+      if (snapDefinition.onPostSnap) await snapDefinition.onPostSnap(snapDefinition, 'chrome', browser)
     }
     await browser.close()
   }

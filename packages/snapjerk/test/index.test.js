@@ -10,8 +10,8 @@ const bin = path.resolve(__dirname, '../src/bin.js')
 
 var goldenSite = path.resolve(__dirname, 'fixture', 'golden-site')
 var goldenSnaps = [
-  { elem: '#diff-0', name: 'grumpy' },
-  { elem: '#diff-1', name: 'bub' }
+  { selector: '#diff-0', name: 'grumpy' },
+  { selector: '#diff-1', name: 'bub' }
 ]
 async function createTmpProject () {
   var tempDir = path.join(os.tmpdir(), `snapjerk-test-${Math.random().toString().substr(2, 10)}`)

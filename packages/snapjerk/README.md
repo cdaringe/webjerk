@@ -30,7 +30,7 @@ specifically, it:
 
   Usage
   // cli only execution
-  $ snapjerk -s /path/to/static-site-directory -d '[{ elem: "body", name: "body" }]' # json or js array
+  $ snapjerk -s /path/to/static-site-directory -d '[{ selector: "body", name: "body" }]' # json or js array
 
   // using a snapjerk.config.js
   $ snapjerk
@@ -46,7 +46,7 @@ specifically, it:
 
 ### library
 
-[API documentation lives here](https://cdaringe.github.io/webjerk/snapjerk/index.html).
+[API documentation lives here](https://cdaringe.github.io/webjerk/).
 
 ```js
 var snapjerk = require('snapjerk')
@@ -106,3 +106,11 @@ just in case you cared to know.  happy hacking.
 - unwind & exit
 
 easy peasy.
+
+# faq
+
+- _"what browsers are supported?"_
+  - ATM, _just chrome_.  this package used to support firefox, but in efforts remove the complexity and overhead of selenium, browser driver wrappers have been removed.
+  - PRs to make a firefox/[slimer](https://github.com/laurentj/slimerjs)/etc adapter would be accepted!
+- _"how do i navigate, or, do <some-action-in-the-browser> to get to the element i need to screenshot?"_
+  - you can pass code to be evaluated on your page prescreenshot. see the `onPreSnap`/`onPostSnap` options.

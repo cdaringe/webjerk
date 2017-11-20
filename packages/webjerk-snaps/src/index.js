@@ -9,12 +9,57 @@ var path = require('path')
 var DEFAULT_WINDOW_EXEC =  function () { return {}; } // eslint-disable-line
 
 /**
+ * Run arbitrary code before `snapDefinition.selector` is
+ * captured.
+ * @callback onPreSnap
+ * @param {SnapDefinition} snapDefinition snap definition for element about to be captured
+ * @param {string} browserName chrome, firefox, etc
+ * @param {*} browserDriver browser adapter used to perform screenshots
+ * @returns {Promise} can be async or sync.
+ * @example
+ * // example: run code in the browser context to ready it for snapping
+ * // https://github.com/GoogleChrome/puppeteer/blob/6512ce768ddce790095e2201d8ada3c24407fc57/docs/api.md#pageevaluatepagefunction-args
+ * {
+ *   selector: '#test',
+ *   name: 'test',
+ *   onPreSnap: function revealElement (snapDefinition, browserName, browserDriver) {
+ *     if (browserName.match(/chrome/i)) {
+ *       browserDriver.evaluate(function revealElement (selector) {
+ *         return window.myApp.show(selector)
+ *       }, snapDefinition.selector)
+ *     }
+ *   }
+ * }
+ */
+
+/**
+ * Run code after a snap has been captured.
+ * See {@link onPreSnap}.
+ * @see {@link onPreSnap}
+ * @callback onPostSnap
+ */
+
+/**
+ * @typedef SnapDefinition
+ * @property {string} selector css selector for single element to capture
+ * @property {string} name basename for .png file
+ * @property {onPreSnap} [onPreSnap] run code before a capture
+ * @property {onPostSnap} [onPostSnap] run code after a capture
+ */
+
+/**
+ * Enables executing code at to compute {@link SnapDefintion}s at runtime.
+ * @function onSnapDefinitionsFromWindow
+ * @returns {Promise}
+ */
+
+/**
  * @typedef SnapsConfig
  * @property {string} staticDirectory
  * @property {Number} [runId=Date.now()]
  * @property {string} [url]
- * @property {string[]} [snapDefinitions]
- * @property {function} [snapDefinitionsFromWindow]
+ * @property {SnapDefinition[]} [snapDefinitions]
+ * @property {onSnapDefinitionsFromWindow} [snapDefinitionsFromWindow]
  * @property {string} [snapRunRoot=`pwd`/snaps/run]
  * @property {string} [snapRefRoot=`pwd`/snaps/ref]
  * @property {boolean} [report=true] generate a static web-application to

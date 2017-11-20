@@ -12,7 +12,7 @@ var conf = {}
 const cli = meow(`
 Usage
 // simplest execution
-$ snapjerk -s /path/to/static-site-directory -d '[{ elem: "body", name: "body" }]'
+$ snapjerk -s /path/to/static-site-directory -d '[{ selector: "body", name: "body" }]'
 
 // using snapjerk.config.js
 $ snapjerk

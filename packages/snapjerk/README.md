@@ -66,7 +66,7 @@ changes come in three forms:
   - approve by simplying removing the images from your reference set
   - PRs to automate this would be great!
 
-for more on the image diffing and approval processes, see (webjerk-image-set-diff)[https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-image-set-diff].
+for more on the image diffing and approval processes, see [webjerk-image-set-diff](https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-image-set-diff).
 
 ## debug
 
@@ -113,5 +113,5 @@ easy peasy.
   - ATM, _just chrome_.  this package used to support firefox, but in efforts to remove complexity and the overhead of selenium, it has been removed.
     - we now use an adapter based strategy.
   - PRs to make a firefox/[slimer](https://github.com/laurentj/slimerjs)/etc adapter would be accepted!
-- _"how do i navigate, or, do <some-action-in-the-browser> to get to the element i need to screenshot?"_
+- _"how do i navigate, or, do `<some-action-in-the-browser>` before or after taking screenshots?"_
   - see the `SnapsConfig.onPreSnap`/`SnapsConfig.onPostSnap` options

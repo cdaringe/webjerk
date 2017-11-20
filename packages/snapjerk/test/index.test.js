@@ -11,7 +11,22 @@ const bin = path.resolve(__dirname, '../src/bin.js')
 var goldenSite = path.resolve(__dirname, 'fixture', 'golden-site')
 var goldenSnaps = [
   { selector: '#diff-0', name: 'grumpy' },
-  { selector: '#diff-1', name: 'bub' }
+  {
+    selector: '#diff-1',
+    name: 'bub',
+    onPreSnap: function (snapDefinition, browserName, browserDriver, conf) {
+      // warning: this code is run in a docker container!
+      var onPreSnapTestFile = path.resolve(
+        process.env.RELATIVE_SNAPS_RUN_DIR,
+        `onPreSnap-${snapDefinition.name}.txt`
+      )
+      debug(`writing: ${onPreSnapTestFile}`) // eslint-disable-line
+      return fs.writeFile( // this fs is _actually_ that which exists in the adapter
+        onPreSnapTestFile,
+        'testing-onPreSnap'
+      )
+    }
+  }
 ]
 async function createTmpProject () {
   var tempDir = path.join(os.tmpdir(), `snapjerk-test-${Math.random().toString().substr(2, 10)}`)
@@ -40,6 +55,8 @@ ava.serial('generates reference set', async function (t) {
   t.is(refs.length, 2, 'two images found')
   t.truthy(refs.some(ref => ref.match(/bub/), 'image of bub found'))
   t.truthy(refs.some(ref => ref.match(/grumpy/), 'image of grumpy found'))
+  var preSnapFileWritten = await fs.exists(path.join(snapRunRoot, 'onPreSnap-bub.txt'))
+  t.truthy(preSnapFileWritten, 'onPreSnap file written')
 })
 
 ava.serial('generates reference set (cli)', async function (t) {

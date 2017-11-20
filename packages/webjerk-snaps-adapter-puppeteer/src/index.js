@@ -11,6 +11,7 @@ const execa = require('execa')
 var docker = new Docker()
 
 function deserialize (serializedJavascript) {
+  debug(`deserializing:`, serializedJavascript)
   return eval(`(${serializedJavascript})`) // eslint-disable-line
 }
 
@@ -26,11 +27,15 @@ module.exports = {
   async capture (conf) {
     var projectRoot = path.resolve(__dirname, '..')
     var serializedConf = serialize(conf)
-    // await Promise.all(
-    //   (await fs.readdir(__dirname))
-    //   .filter(folder => folder.match(/tmp-/))
-    //   .map(folder => fs.remove(path.join(__dirname, folder)))
-    // )
+    try {
+      deserialize(serializedConf)
+    } catch (err) {
+      throw new Error([
+        `the configuration you passed cannot be serialized and deserialized.`,
+        `this is required such that your configuration may be passed into a`,
+        `docker context.\n\n${err.message}`
+      ].join(' '))
+    }
     var tempDir = path.resolve(__dirname, `.tmp-${Math.random()}`)
     var tempStaticDir = path.resolve(tempDir, 'static')
     var tempFile = path.join(tempDir, 'capture-config.js')
@@ -43,20 +48,7 @@ module.exports = {
     var tempDirRelative = path.relative(projectRoot, tempDir)
     var tempFileRelative = path.relative(projectRoot, tempFile)
     var tempSnapsRunDirRelative = path.relative(projectRoot, tempSnapsRunDir)
-
-    /**
-     * local puppeteer debuggins only!
-     */
-    // Object.assign(process.env, {
-    //   PROJECT_ROOT: projectRoot,
-    //   RELATIVE_SNAPS_RUN_DIR: './',
-    //   STATIC: tempStaticDir
-    // })
-    // conf.url = 'http://localhost:6060'
-    // await this.noButSeriouslyCapture(conf)
-    // return
-
-    var networkName = `snapjerky-${Math.random().toString().substring(2, 10)}`
+    var networkName = `snapjerk-${Math.random().toString().substring(2, 10)}`
     var network = await docker.createNetwork({
       Name: networkName
     })
@@ -71,6 +63,8 @@ module.exports = {
       Hostname: 'static',
       Image: 'node',
       Cmd: ['node', '/adapter/node_modules/.bin/httpster', '-d', '/static'],
+      AttachStderr: debug.enabled,
+      AttachStdout: debug.enabled,
       HostConfig: {
         AutoRemove: true,
         Binds: [
@@ -97,8 +91,8 @@ module.exports = {
       Cmd: isDebugPup
         ? ['node', '--inspect-brk', thisFileRelative]
         : ['node', thisFileRelative],
-      AttachStderr: true,
-      AttachStdout: true,
+      AttachStderr: debug.enabled,
+      AttachStdout: debug.enabled,
       Env: [
         `DEBUG=${process.env.DEBUG}`,
         `STATIC_SERVER_ID=${staticServer.id}`,
@@ -119,10 +113,8 @@ module.exports = {
       }
     })
     try {
-      await Promise.all([
-        staticServer.start(),
-        puppeteerServer.start()
-      ])
+      await staticServer.start()
+      await puppeteerServer.start()
       staticServer.attach(
         { stream: true, stdout: true, stderr: true },
         (err, stream) => stream.pipe(process.stdout) // eslint-disable-line
@@ -175,7 +167,10 @@ module.exports = {
     debug('capturing snaps')
     for (var i in snapDefinitions) {
       var snapDefinition = snapDefinitions[i]
-      if (snapDefinition.onPreSnap) await snapDefinition.onPreSnap(snapDefinition, 'chrome', browser)
+      if (snapDefinition.onPreSnap) {
+        debug(`onPreSnap: ${snapDefinition.name}`)
+        await snapDefinition.onPreSnap(snapDefinition, 'chrome', browser, conf)
+      }
       debug('capturing snap:', snapDefinition.selector)
       await page.waitFor(snapDefinition.selector, {
         timeout: 2000
@@ -187,7 +182,10 @@ module.exports = {
         path: targetPng,
         type: 'png'
       })
-      if (snapDefinition.onPostSnap) await snapDefinition.onPostSnap(snapDefinition, 'chrome', browser)
+      if (snapDefinition.onPostSnap) {
+        debug(`onPostSnap: ${snapDefinition.name}`)
+        await snapDefinition.onPostSnap(snapDefinition, 'chrome', browser, conf)
+      }
     }
     await browser.close()
   }

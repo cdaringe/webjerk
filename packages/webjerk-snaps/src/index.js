@@ -11,6 +11,14 @@ var DEFAULT_WINDOW_EXEC =  function () { return {}; } // eslint-disable-line
 /**
  * Run arbitrary code before `snapDefinition.selector` is
  * captured.
+ *
+ * **WARNING** this code must be serializable, or serialized in
+ * advanced.  This is because this code is run by a different process--a docker
+ * processes.  Because we execute in a docker context, the docker process is
+ * responsible for calling the method.  Therefore, make this code as simple
+ * as possible, or if you absolutely must have complexity here (please don't),
+ * you can bundle your JS into a string and eval it in.  PRs welcome if folks want
+ * to build in rollup/webpack/etc to do this automatically.
  * @callback onPreSnap
  * @param {SnapDefinition} snapDefinition snap definition for element about to be captured
  * @param {string} browserName chrome, firefox, etc

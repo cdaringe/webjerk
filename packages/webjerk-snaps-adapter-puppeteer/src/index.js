@@ -1,64 +1,45 @@
 'use strict'
 
-require('perish')
-var fs = require('fs-extra')
-var serialize = require('serialize-javascript')
 var path = require('path')
 var debug = require('debug')('webjerk:snaps-adapter-puppeteer')
-var bb = require('bluebird')
-var Docker = require('dockerode')
-const execa = require('execa')
-var docker = new Docker()
+var WebjerkSnapsAdapter = require('webjerk-snaps-adapter')
+var adapterDirname = path.resolve(__dirname, '..')
 
-function deserialize (serializedJavascript) {
-  debug(`deserializing:`, serializedJavascript)
-  return eval(`(${serializedJavascript})`) // eslint-disable-line
-}
-
-async function permitFail (fn) {
-  try {
-    await Promise.resolve(fn())
-  } catch (err) {
-    /* pass */
+class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
+  constructor (conf) {
+    super(Object.assign(
+      {},
+      conf,
+      {
+        adapterFilename: __filename,
+        browserName: 'chrome',
+        dockerImageNames: [
+          'node',
+          'zenato/puppeteer-renderer'
+        ]
+      }
+    ))
   }
-}
 
-module.exports = {
-  async capture (conf) {
-    var projectRoot = path.resolve(__dirname, '..')
-    var serializedConf = serialize(conf)
-    try {
-      deserialize(serializedConf)
-    } catch (err) {
-      throw new Error([
-        `the configuration you passed cannot be serialized and deserialized.`,
-        `this is required such that your configuration may be passed into a`,
-        `docker context.\n\n${err.message}`
-      ].join(' '))
+  get puppeteer () {
+    if (!this._puppeteer) {
+      // require this dynamically as puppeteer is not in our code--it's in the
+      // docker image's node_modules.  HACKS! dirty rotten... effecient
+      // effective hacks :)
+      this._puppeteer = require('puppeteer')
     }
-    var tempDir = path.resolve(__dirname, `.tmp-${Math.random()}`)
-    var tempStaticDir = path.resolve(tempDir, 'static')
-    var tempFile = path.join(tempDir, 'capture-config.js')
-    var tempSnapsRunDir = path.resolve(tempDir, 'snaps', 'run', Math.random().toString().substr(2))
-    await bb.map([tempDir, tempStaticDir, tempSnapsRunDir], dir => fs.mkdirp(dir))
-    await fs.copy(conf.staticDirectory, tempStaticDir)
-    debug('writing webjerk-snaps conf to disk for docker to pickup', conf)
-    await fs.writeFile(tempFile, serializedConf)
-    var thisFileRelative = path.relative(projectRoot, __filename)
-    var tempDirRelative = path.relative(projectRoot, tempDir)
-    var tempFileRelative = path.relative(projectRoot, tempFile)
-    var tempSnapsRunDirRelative = path.relative(projectRoot, tempSnapsRunDir)
-    var networkName = `snapjerk-${Math.random().toString().substring(2, 10)}`
-    var network = await docker.createNetwork({
-      Name: networkName
-    })
-    debug('pulling images')
-    var cpConf = debug.enabled ? { stdio: 'inherit' } : {}
-    await Promise.all([
-      execa('docker', ['pull', 'node'], cpConf),
-      execa('docker', ['pull', 'zenato/puppeteer-renderer'], cpConf)
-    ])
-    debug('nodjes & puppeteer docker images pulled')
+    return this._puppeteer
+  }
+  async bootContainers (opts) {
+    const {
+      docker,
+      dockerEntrypoint,
+      networkName,
+      runVolumeDirname,
+      tempCaptureConfigFileRelative,
+      tempSnapsRunDirRelative,
+      tempStaticDirname
+    } = opts
     var staticServer = await docker.createContainer({
       Hostname: 'static',
       Image: 'node',
@@ -68,8 +49,8 @@ module.exports = {
       HostConfig: {
         AutoRemove: true,
         Binds: [
-          `${projectRoot}:/adapter`,
-          `${tempStaticDir}:/static`
+          `${adapterDirname}:/adapter`,
+          `${tempStaticDirname}:/static`
         ]
       },
       ExposedPorts: {
@@ -85,76 +66,49 @@ module.exports = {
         }
       }
     })
-    var isDebugPup = false
     var puppeteerServer = await docker.createContainer({
       Image: 'zenato/puppeteer-renderer',
-      Cmd: isDebugPup
-        ? ['node', '--inspect-brk', thisFileRelative]
-        : ['node', thisFileRelative],
+      Cmd: ['node', dockerEntrypoint],
       AttachStderr: debug.enabled,
       AttachStdout: debug.enabled,
       Env: [
         `DEBUG=${process.env.DEBUG}`,
         `STATIC_SERVER_ID=${staticServer.id}`,
-        `ENTRY=${thisFileRelative}`,
-        `PROJECT_ROOT=${projectRoot}`,
-        `RELATIVE_CONFIG_FILE=${tempFileRelative}`,
-        `RELATIVE_RESULTS_DIR=${tempDirRelative}`,
+        `RELATIVE_CONFIG_FILE=${tempCaptureConfigFileRelative}`,
         `RELATIVE_SNAPS_RUN_DIR=${tempSnapsRunDirRelative}`,
-        `STATIC=${tempStaticDir}`
+        `STATIC=${tempStaticDirname}`
       ],
       WorkingDir: '/app/adapter',
       HostConfig: {
         AutoRemove: true,
         Binds: [
-          `${projectRoot}:/app/adapter` // image's node_modules are in /app. use 'em
+          `${runVolumeDirname}:/app/adapter` // image's node_modules are in /app. use 'em
         ],
         NetworkMode: networkName
       }
     })
-    try {
-      await staticServer.start()
-      await puppeteerServer.start()
-      staticServer.attach(
-        { stream: true, stdout: true, stderr: true },
-        (err, stream) => stream.pipe(process.stdout) // eslint-disable-line
-      )
-      puppeteerServer.attach(
-        { stream: true, stdout: true, stderr: true },
-        (err, stream) => {
-          if (err) throw err
-          stream.pipe(process.stdout) // eslint-disable-line
-        }
-      )
-      await puppeteerServer.wait()
-      await fs.remove(conf.snapRunRoot)
-      debug(`copying \n\t${tempSnapsRunDir}\n\t${conf.snapRunRoot}`)
-      await fs.move(tempSnapsRunDir, conf.snapRunRoot)
-    } finally {
-      debug(`trashing temporary run docker run directory ${tempSnapsRunDir}`)
-      await fs.remove(tempDir)
-      await Promise.all([
-        permitFail(() => staticServer.stop()),
-        permitFail(() => puppeteerServer.stop())
-      ])
-      await network.remove()
-    }
-  },
-  async dockerCapture () {
-    var serializedConf = await fs.readFile(process.env.RELATIVE_CONFIG_FILE)
-    var conf = deserialize(serializedConf)
-    debug(`deserialized webjerk-snap configuration`, conf)
-    return this.noButSeriouslyCapture(conf)
-  },
-  /**
-   *
-   * @param {SnapsConfig} conf
-   * @returns {Promise}
-   */
-  async noButSeriouslyCapture (conf) {
-    var puppeteer = require('puppeteer') // dynamic require as ppt is not in our code, but in the image's node_modules
+    await staticServer.start()
+    await puppeteerServer.start()
+    staticServer.attach(
+      { stream: true, stdout: true, stderr: true },
+      (err, stream) => {
+        if (err) throw err
+        if (debug.enabled) stream.pipe(process.stdout)
+      }
+    )
+    puppeteerServer.attach(
+      { stream: true, stdout: true, stderr: true },
+      (err, stream) => {
+        if (err) throw err
+        if (debug.enabled) stream.pipe(process.stdout)
+      }
+    )
+    await puppeteerServer.wait()
+    return [ staticServer, puppeteerServer ]
+  }
+  async openSession (conf) {
     let { snapDefinitions, snapDefinitionsFromWindow } = conf
-    const browser = await puppeteer.launch({
+    const browser = await this.puppeteer.launch({
       args: ['--no-sandbox']
     })
     const page = await browser.newPage()
@@ -163,35 +117,31 @@ module.exports = {
     if (!snapDefinitions && snapDefinitionsFromWindow) {
       snapDefinitions = await page.evaluate(snapDefinitionsFromWindow)
     }
-    if (!Array.isArray(snapDefinitions)) throw new Error('no snapDefinitions found')
-    debug('capturing snaps')
-    for (var i in snapDefinitions) {
-      var snapDefinition = snapDefinitions[i]
-      if (snapDefinition.onPreSnap) {
-        debug(`onPreSnap: ${snapDefinition.name}`)
-        await snapDefinition.onPreSnap(snapDefinition, 'chrome', browser, conf)
-      }
-      debug('capturing snap:', snapDefinition.selector)
-      await page.waitFor(snapDefinition.selector, {
-        timeout: 2000
-      })
-      var handle = await page.$(snapDefinition.selector)
-      var targetPng = path.join(process.env.RELATIVE_SNAPS_RUN_DIR, `${snapDefinition.name}-chrome.png`)
-      debug(`screenshotting ${snapDefinition.selector} ${targetPng}`)
-      await handle.screenshot({
-        path: targetPng,
-        type: 'png'
-      })
-      if (snapDefinition.onPostSnap) {
-        debug(`onPostSnap: ${snapDefinition.name}`)
-        await snapDefinition.onPostSnap(snapDefinition, 'chrome', browser, conf)
-      }
-    }
+    return { browser, page, snapDefinitions }
+  }
+  async captureSnap ({
+    session: {
+      page,
+      browser
+    },
+    snapDefinition,
+    targetPngFilename
+  }) {
+    await page.waitFor(snapDefinition.selector, { timeout: 2000 })
+    var handle = await page.$(snapDefinition.selector)
+    await handle.screenshot({
+      path: targetPngFilename,
+      type: 'png'
+    })
+  }
+  async closeSession ({ browser }) {
     await browser.close()
   }
 }
 
 if (require.main === module) {
   debug(`webjerk-snaps-adapter-puppeteer execution resumed in docker`)
-  module.exports.dockerCapture()
+  WebjerkSnapsAdapter.prototype.rehydrate(WebjerkSnapsAdapterPuppeteer)
 }
+
+module.exports = WebjerkSnapsAdapterPuppeteer

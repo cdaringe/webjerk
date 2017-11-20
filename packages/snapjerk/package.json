@@ -13,8 +13,8 @@
     "fs-extra": "^4.0.2",
     "httpster": "^1.0.3",
     "meow": "^3.7.0",
+    "perish": "^1.0.1",
     "webjerk": "^0.2.2",
-    "webjerk-process-wrangler": "^0.2.2",
     "webjerk-snaps": "^0.2.3"
   },
   "repository": {
@@ -28,6 +28,6 @@
     "docs:build": "jsdock build",
     "docs:publish": "jsdock publish",
     "postpublish": "npm run docs-publish",
-    "test": "ava test/*.test.js"
+    "test": "DEBUG=webjerk* ava --verbose test/*.test.js"
   }
 }

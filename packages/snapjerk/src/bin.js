@@ -2,6 +2,7 @@
 
 'use strict'
 
+require('perish')
 var snapjerk = require('./index')
 var meow = require('meow')
 var path = require('path')

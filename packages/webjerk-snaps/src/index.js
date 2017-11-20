@@ -105,7 +105,8 @@ module.exports = function registerSnaps () {
         fs.mkdirp(this.conf.snapRefRoot)
       ])
       debug(`launching adapter ${this.conf.adapter}`)
-      return require(this.conf.adapter).capture(this.conf)
+      var AdapterCTor = require(this.conf.adapter)
+      return new AdapterCTor().capture(this.conf)
     },
     /**
      * webjerk post hook

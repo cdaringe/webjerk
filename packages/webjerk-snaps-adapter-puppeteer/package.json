@@ -6,15 +6,8 @@
   "license": "MIT",
   "author": "cdaringe",
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "debug": "^3.1.0",
-    "dockerode": "^2.5.3",
-    "execa": "^0.8.0",
-    "fs-extra": "^4.0.2",
     "httpster": "^1.0.3",
-    "lodash": "^4.17.4",
-    "perish": "^1.0.1",
-    "serialize-javascript": "^1.4.0"
+    "webjerk-snaps-adapter": "^0.2.3"
   },
   "repository": {
     "type": "git",

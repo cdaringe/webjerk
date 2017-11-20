@@ -13,7 +13,8 @@
     "webjerk-image-set-diff": "^0.2.4"
   },
   "devDependencies": {
-    "webjerk-snaps-adapter-puppeteer": "^0.2.4"
+    "webjerk-snaps-adapter-puppeteer": "^0.2.4",
+    "webjerk-snaps-adapter-casperjs": "^0.2.4"
   },
   "repository": {
     "type": "git",

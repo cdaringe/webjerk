@@ -49,7 +49,8 @@
 
     <section class="readme">
         <article><p><a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="JavaScript Style Guide"></a> <a href="https://app.codeship.com/projects/212005"> <img src="https://app.codeship.com/projects/c605af90-fd3d-0134-eab4-1aa2768960b8/status?branch=master" alt="Codeship Status for cdaringe/webjerk"></a></p>
-<h1>webjerk-image-set-diff</h1><p>compares two sets of images.  image sets are PNGs derived from from a user provided folders, <code>refDir</code> &amp; <code>runDir</code>.  images are compared by basename. that is, <code>/refDir/test-image.png</code> would be compared to <code>/runDir/test-image.png</code>.</p>
+<h1>webjerk-image-set-diff</h1><p>compares two sets of images.</p>
+<p>provide it folders, <code>refDir</code> &amp; <code>runDir</code>, where both folders contain <code>png</code> files.  images are compared by basename. that is, <code>/refDir/test-image.png</code> would be compared to <code>/runDir/test-image.png</code>.</p>
 <p>the comparisons use <a href="https://github.com/yahoo/blink-diff">blink-diff</a> to compare images.</p>
 <h2>usage</h2><pre class="prettyprint source lang-js"><code>var ImageSetDiffer = require('webjerk-image-set-diff')
 var refDir = '/reference-images'
@@ -61,13 +62,16 @@ var idr = new ImageSetDiffer({
   allowNewImages: true, // allow new images into the ref set
   approveChanges: false // appove run images as new refs. migrate run/ images to ref/
 })
-idr.run()
-.then(...) // resolves a set of blinkDifference results</code></pre><p>when there are mismatches, an <code>ImageSetDiffer</code> instance throws.  <code>err.code</code> will equal <code>'EIMAGEDIFFS'</code>. more interestingly, <code>err.differences</code> will have an array of the blink difference data attached to the failing image.</p>
+var diffs = await idr.run() // blinkDifference objects</code></pre><p>when mismatches are detected, <code>ImageSetDiffer::run</code> throws.</p>
+<ul>
+<li><code>err.code</code> will equal <code>'EIMAGEDIFFS'</code></li>
+<li><code>err.differences</code> will have an array of blink difference data attached to the failing image</li>
+</ul>
 <pre class="prettyprint source lang-js"><code>console.log(err.differences)
 // => [{ basename, blinkDiff, message }, ..., for, each, image, mismatch]</code></pre><h2>config</h2><p>some settings may be set from the env:</p>
 <ul>
-<li><code>WEBJERK_ALLOW_NEW_IMAGES</code>, empty string ~false, anything else, ~true</li>
-<li><code>WEBJERK_APPROVE_CHANGES</code>, empty string ~false, anything else, ~true</li>
+<li><code>WEBJERK_ALLOW_NEW_IMAGES</code>, set to allow new images not found in the reference set</li>
+<li><code>WEBJERK_APPROVE_CHANGES</code>, set to approve all image changes</li>
 </ul></article>
     </section>
 

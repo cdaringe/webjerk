@@ -49,10 +49,10 @@
 
     <section class="readme">
         <article><p><a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="JavaScript Style Guide"></a> <a href="https://app.codeship.com/projects/212005"> <img src="https://app.codeship.com/projects/c605af90-fd3d-0134-eab4-1aa2768960b8/status?branch=master" alt="Codeship Status for cdaringe/webjerk"></a></p>
-<h1>webjerk-process-wrangler</h1><p>add webjerk hooks to launch &amp; teardown a process</p>
+<h1>webjerk-process-wrangler</h1><p>add webjerk hooks to launch &amp; teardown a process.  it also writes a temporary PID file to disk.  if the previous run failed and the PID file remains, webjerk attempts to remove that PID.</p>
 <h2>config</h2><pre class="prettyprint source lang-js"><code>{
   bin: 'node',
-  args: [...],
+  args: [...], // ['./test.js']
   opts: {} // see child_proccess.spawn opts
 }</code></pre></article>
     </section>

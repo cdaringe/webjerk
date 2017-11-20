@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-webjerk-snaps.html">webjerk-snaps</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~main">main</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~post">post</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-webjerk-snaps.html">webjerk-snaps</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~main">main</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~post">post</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#onSnapDefinitionsFromWindow">onSnapDefinitionsFromWindow</a></span></li>
 </nav>
 
 <div id="main">
@@ -50,12 +50,65 @@ var path = require('path')
 var DEFAULT_WINDOW_EXEC =  function () { return {}; } // eslint-disable-line
 
 /**
+ * Run arbitrary code before `snapDefinition.selector` is
+ * captured.
+ *
+ * **WARNING** this code must be serializable, or serialized in
+ * advanced.  This is because this code is run by a different process--a docker
+ * processes.  Because we execute in a docker context, the docker process is
+ * responsible for calling the method.  Therefore, make this code as simple
+ * as possible, or if you absolutely must have complexity here (please don't),
+ * you can bundle your JS into a string and eval it in.  PRs welcome if folks want
+ * to build in rollup/webpack/etc to do this automatically.
+ * @callback onPreSnap
+ * @param {SnapDefinition} snapDefinition snap definition for element about to be captured
+ * @param {string} browserName chrome, firefox, etc
+ * @param {*} browserDriver browser adapter used to perform screenshots
+ * @returns {Promise} can be async or sync.
+ * @example
+ * // example: run code in the browser context to ready it for snapping
+ * // https://github.com/GoogleChrome/puppeteer/blob/6512ce768ddce790095e2201d8ada3c24407fc57/docs/api.md#pageevaluatepagefunction-args
+ * {
+ *   selector: '#test',
+ *   name: 'test',
+ *   onPreSnap: function revealElement (snapDefinition, browserName, browserDriver) {
+ *     if (browserName.match(/chrome/i)) {
+ *       browserDriver.evaluate(function revealElement (selector) {
+ *         return window.myApp.show(selector)
+ *       }, snapDefinition.selector)
+ *     }
+ *   }
+ * }
+ */
+
+/**
+ * Run code after a snap has been captured.
+ * See {@link onPreSnap}.
+ * @see {@link onPreSnap}
+ * @callback onPostSnap
+ */
+
+/**
+ * @typedef SnapDefinition
+ * @property {string} selector css selector for single element to capture
+ * @property {string} name basename for .png file
+ * @property {onPreSnap} [onPreSnap] run code before a capture
+ * @property {onPostSnap} [onPostSnap] run code after a capture
+ */
+
+/**
+ * Enables executing code at to compute {@link SnapDefintion}s at runtime.
+ * @function onSnapDefinitionsFromWindow
+ * @returns {Promise}
+ */
+
+/**
  * @typedef SnapsConfig
  * @property {string} staticDirectory
  * @property {Number} [runId=Date.now()]
  * @property {string} [url]
- * @property {string[]} [snapDefinitions]
- * @property {function} [snapDefinitionsFromWindow]
+ * @property {SnapDefinition[]} [snapDefinitions]
+ * @property {onSnapDefinitionsFromWindow} [snapDefinitionsFromWindow]
  * @property {string} [snapRunRoot=`pwd`/snaps/run]
  * @property {string} [snapRefRoot=`pwd`/snaps/ref]
  * @property {boolean} [report=true] generate a static web-application to

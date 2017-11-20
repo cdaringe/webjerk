@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-webjerk-snaps.html">webjerk-snaps</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~main">main</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~post">post</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-webjerk-snaps.html">webjerk-snaps</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~main">main</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-webjerk-snaps.html#~post">post</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#onSnapDefinitionsFromWindow">onSnapDefinitionsFromWindow</a></span></li>
 </nav>
 
 <div id="main">
@@ -59,13 +59,13 @@
 </ul>
 </li>
 <li>creates a new reference image set <em>or</em> compares the captured images to a reference set<ul>
-<li>on comparison failure (optionally) <a href="https://github.com/cdaringe/webjerk-image-set-diff-reporter">generates a static website highlighting the failed comparisons</a>.  this is handy if you you want your CI to deploy the site somewhere for public viewing.</li>
+<li>on comparison failure (optionally) <a href="https://github.com/cdaringe/webjerk-image-set-diff-reporter">generates a static website highlighting the failed comparisons</a>.  this is handy if you want your CI to deploy the site somewhere for public viewing.</li>
 </ul>
 </li>
 </ul>
 <p>this type of testing is somtimes also called CSS testing or screenshot testing.</p>
 <p>don't like the way this package works?  hack it!  all things <code>webjerk</code> are small and modular.  feel free to drop us an issue on GitHub with questions &amp; comments too!</p>
-<h2>usage</h2><p><a href="https://cdaringe.github.io/webjerk-snaps/index.html">API documentation lives here</a>.</p>
+<h2>usage</h2><p><a href="https://cdaringe.github.io/webjerk/webjerk-snaps/index.html">API documentation lives here</a>.</p>
 <ul>
 <li>to get image baselines, create a config and run. see the <code>#example</code> section</li>
 <li>run it!<ul>
@@ -90,7 +90,7 @@ wj.run({
         ],
         url: 'http://localhost:3333', // what page to extract snaps from
         testName: 'screenshot-all-divs',
-        snapDefinitions: [{ elem: 'div', name: 'best div' }], // OR,
+        snapDefinitions: [{ selector: 'div', name: 'best div' }], // OR,
         snapDefinitionsFromWindow: function queryDivSnapDefinitions (divs, message) {
           // @NOTE this JS is run in the _browser_ context
           // webdriverio JS serialziation requires semis. :/
@@ -101,7 +101,7 @@ wj.run({
           while (divs[i]) {
             tDiv = divs[i];
             if (!tDiv.id) tDiv.id = '__dummy_div_' + i;
-            map.push({ elem: '#' + tDiv.id, name: tDiv.id });
+            map.push({ selector: '#' + tDiv.id, name: tDiv.id });
             ++i;
           }
           return map;

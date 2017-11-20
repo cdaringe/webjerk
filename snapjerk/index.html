@@ -58,7 +58,7 @@
 <p>specifically, it:</p>
 <ul>
 <li>generates <a href="https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-snaps">screenshots</a> of elements</li>
-<li>compares captured shots from a reference set shots with <a href="https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-image-set-diff">webjerk-image-set-diff</a><ul>
+<li>compares captured shots from a reference set of shots with <a href="https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-image-set-diff">webjerk-image-set-diff</a><ul>
 <li>if no reference images are found, the first generated set are designated as references</li>
 </ul>
 </li>
@@ -71,7 +71,7 @@
 
   Usage
   // cli only execution
-  $ snapjerk -s /path/to/static-site-directory -d '[{ elem: &quot;body&quot;, name: &quot;body&quot; }]' # json or js array
+  $ snapjerk -s /path/to/static-site-directory -d '[{ selector: &quot;body&quot;, name: &quot;body&quot; }]' # json or js array
 
   // using a snapjerk.config.js
   $ snapjerk
@@ -82,10 +82,72 @@
   Options
   -s, --static &lt;directory>
   -c, --config &lt;filename>
-  -d, --definitions &lt;snap-definitions></code></pre><h3>library</h3><p><a href="https://cdaringe.github.io/webjerk/snapjerk/index.html">API documentation lives here</a>.</p>
+  -d, --definitions &lt;snap-definitions></code></pre><h3>library</h3><p><a href="https://cdaringe.github.io/webjerk/">API documentation lives here</a>.</p>
 <pre class="prettyprint source lang-js"><code>var snapjerk = require('snapjerk')
 var conf = { ... } // see API docs
-snapjerk(conf).then(...) // `snaps/` will be a dir with the result of `webjerk-snaps` within!</code></pre></article>
+snapjerk(conf).then(...) // `snaps/` will be a dir with the result of `webjerk-snaps` within!</code></pre><h3>approving changes</h3><p>changes come in three forms:</p>
+<ul>
+<li>new images<ul>
+<li>approve by setting <code>WEBJERK_ALLOW_NEW_IMAGES=1</code> in your env</li>
+</ul>
+</li>
+<li>changed images<ul>
+<li>approve changes by setting <code>WEBJERK_APPROVE_CHANGES=1</code> in your env</li>
+</ul>
+</li>
+<li>removed images<ul>
+<li>approve by simplying removing the images from your reference set</li>
+<li>PRs to automate this would be great!</li>
+</ul>
+</li>
+</ul>
+<p>for more on the image diffing and approval processes, see (webjerk-image-set-diff)[https://github.com/cdaringe/webjerk/tree/master/packages/webjerk-image-set-diff].</p>
+<h2>debug</h2><ul>
+<li>set <code>DEBUG=webjerk*</code> to enable verbose logging</li>
+<li><code>node --inspect-brk node_modules/.bin/snapjerk</code>, just like any other old node process :)</li>
+</ul>
+<h2>why?</h2><p>great options out there for testing visual diffs in browsers are slim.  i've
+drawn the conclusion that most people roll their own image snap and comparison
+solutions, or, bring in large swaths of dependencies and configuration to make
+it all work.</p>
+<p>this project aims to sceenshot testing really easy.  by easy, i mean:</p>
+<ul>
+<li>minimal dependencies</li>
+<li>minimal configuration</li>
+<li>small API surface</li>
+<li>easy to debug &amp; hack on</li>
+<li>host agnostic screenshots. different browsers on different boxes yield different visual rendering.  browsers in docker resolves that.</li>
+</ul>
+<p>the nearest thing to this project is  (BackstopJS)[https://github.com/garris/BackstopJS].  it's great!  it's more comprehensive
+than this package, but also brings with it more complexity.  give it a shot if
+snapjerk doesn't work out for you.</p>
+<h2>arch</h2><p>just in case you cared to know.  happy hacking.</p>
+<p><img src='https://raw.githubusercontent.com/cdaringe/webjerk/master/img/arch.png' alt='snapjerk-arch' /></p>
+<ul>
+<li><code>snapjerk</code> digests user config &amp; instantiates the <code>webjerk-snaps</code> plugin</li>
+<li><code>snapjerk</code> registers the <code>webjerk-snaps</code> plugin instance with <code>webjerk</code>, and runs <code>webjerk</code></li>
+<li><code>webjerk</code> runs the <code>main</code> and <code>post</code> hooks on <code>webjerk-snaps</code><ul>
+<li><code>main</code> boots the browser in docker and takes screenshot</li>
+<li><code>post</code> generates a diff report (optionally)</li>
+</ul>
+</li>
+<li>unwind &amp; exit</li>
+</ul>
+<p>easy peasy.</p>
+<h1>faq</h1><ul>
+<li><em>&quot;what browsers are supported?&quot;</em><ul>
+<li>ATM, <em>just chrome</em>.  this package used to support firefox, but in efforts to remove complexity and the overhead of selenium, it has been removed.<ul>
+<li>we now use an adapter based strategy.</li>
+</ul>
+</li>
+<li>PRs to make a firefox/<a href="https://github.com/laurentj/slimerjs">slimer</a>/etc adapter would be accepted!</li>
+</ul>
+</li>
+<li><em>&quot;how do i navigate, or, do <some-action-in-the-browser> to get to the element i need to screenshot?&quot;</em><ul>
+<li>see the <code>SnapsConfig.onPreSnap</code>/<code>SnapsConfig.onPostSnap</code> options</li>
+</ul>
+</li>
+</ul></article>
     </section>
 
 

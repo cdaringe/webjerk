@@ -1,7 +1,7 @@
 {
   "name": "webjerk-snaps",
   "description": "use CSS screenshot testing in webjerk",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "main": "src/index.js",
   "license": "MIT",
   "author": "cdaringe",
@@ -10,10 +10,10 @@
     "debug": "^3.1.0",
     "fs-extra": "^4.0.2",
     "lodash": "^4.17.4",
-    "webjerk-image-set-diff": "^0.2.3"
+    "webjerk-image-set-diff": "^0.2.4"
   },
   "devDependencies": {
-    "webjerk-snaps-adapter-puppeteer": "^0.2.3"
+    "webjerk-snaps-adapter-puppeteer": "^0.2.4"
   },
   "repository": {
     "type": "git",

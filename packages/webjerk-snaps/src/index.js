@@ -93,8 +93,8 @@ module.exports = function registerSnaps () {
       var runId = Date.now().toString()
       this.conf = Object.assign(
         {
-          adapter: 'webjerk-snaps-adapter-casperjs',
-          // adapter: 'webjerk-snaps-adapter-puppeteer',
+          // adapter: 'webjerk-snaps-adapter-casperjs',
+          adapter: 'webjerk-snaps-adapter-puppeteer',
           runId,
           snapRunRoot: path.join(process.cwd(), 'snaps', 'run', runId),
           snapRefRoot: path.join(process.cwd(), 'snaps', 'ref')

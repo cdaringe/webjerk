@@ -1,13 +1,13 @@
 {
   "name": "webjerk-snaps-adapter-puppeteer",
   "description": "puppeteer adapter for webjerk-snaps",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "main": "src/index.js",
   "license": "MIT",
   "author": "cdaringe",
   "dependencies": {
     "httpster": "^1.0.3",
-    "webjerk-snaps-adapter": "^0.2.4"
+    "webjerk-snaps-adapter": "^0.2.6"
   },
   "repository": {
     "type": "git",

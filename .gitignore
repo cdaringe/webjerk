@@ -38,3 +38,4 @@ jspm_packages
 plugins
 scripts/docs
 out
+packages/webjerk-snaps-adapter-casperjs

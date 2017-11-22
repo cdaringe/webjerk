@@ -65,7 +65,6 @@ Object.assign(ImageSetDiffer.prototype, {
     await this._handleCompareResults(diffsAndErrors)
   },
   _copyRunImagesToRefImages () {
-    console.log('no reference images found. setting reference images from run.')
     debug('images using as ref:', this._runBasenames)
     return Promise.all(this._runBasenames.map(tBasname => {
       return fs.copy(path.join(this.conf.runDir, tBasname), path.join(this.conf.refDir, tBasname))
@@ -106,7 +105,10 @@ Object.assign(ImageSetDiffer.prototype, {
     .then(() => { this._refBasenames = this._runBasenames })
   },
   _maybeApproveChanges () {
-    if (this.conf.approveChanges) return this._copyRunImagesToRefImages()
+    if (this.conf.approveChanges) {
+      debug('images changes approved')
+      return this._copyRunImagesToRefImages()
+    }
     return Promise.resolve()
   },
   _partitionImageBasenames () {
@@ -163,6 +165,7 @@ Object.assign(ImageSetDiffer.prototype, {
       if (newImages.length) return this._handleNewImages()
       return Promise.resolve()
     }
+    debug('no reference images found. setting reference images from run.')
     return this._copyRunImagesToRefImages()
   },
   validateImagePartitions ({ missingImages, toCompare, newImages }) {

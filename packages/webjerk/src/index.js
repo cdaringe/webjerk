@@ -17,6 +17,7 @@ module.exports = {
   async run (config) {
     if (!config) throw new Error('config missing')
     config = this._config = assign({}, { plugins: [] }, config)
+    config.plugins = await Promise.resolve(config.plugins)
     var errs = []
     var results = {}
     var preLifecycleResults

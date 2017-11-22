@@ -1,9 +1,7 @@
 'use strict'
 
-var path = require('path')
 var debug = require('debug')('webjerk:snaps-adapter-puppeteer')
 var WebjerkSnapsAdapter = require('webjerk-snaps-adapter')
-var adapterDirname = path.resolve(__dirname, '..')
 
 class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
   constructor (conf) {
@@ -14,7 +12,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
         adapterFilename: __filename,
         browserName: 'chrome',
         dockerImageNames: [
-          'node',
+          'cdaringe/httpster',
           'zenato/puppeteer-renderer'
         ]
       }
@@ -35,6 +33,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
       docker,
       dockerEntrypoint,
       networkName,
+      port,
       runVolumeDirname,
       tempCaptureConfigFileRelative,
       tempSnapsRunDirRelative,
@@ -42,19 +41,26 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
     } = opts
     var staticServer = await docker.createContainer({
       Hostname: 'static',
-      Image: 'node',
-      Cmd: ['node', '/adapter/node_modules/.bin/httpster', '-d', '/static'],
+      Image: 'cdaringe/httpster',
       AttachStderr: debug.enabled,
       AttachStdout: debug.enabled,
       HostConfig: {
-        AutoRemove: true,
+        AutoRemove: !debug.enabled,
         Binds: [
-          `${adapterDirname}:/adapter`,
-          `${tempStaticDirname}:/static`
-        ]
+          `${tempStaticDirname}:/public`
+        ],
+        PortBindings: Object.assign(
+          {},
+          debug.enabled
+            ? {[`${port}/tcp`]: [{ HostPort: port }]}
+            : {}
+        )
       },
+      ENV: [
+        `PORT=${port}`
+      ],
       ExposedPorts: {
-        '3333/tcp': {}
+        [`${port}/tcp`]: {}
       },
       NetworkingConfig: {
         EndpointsConfig: {
@@ -66,6 +72,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
         }
       }
     })
+    debug('static container up')
     var puppeteerServer = await docker.createContainer({
       Image: 'zenato/puppeteer-renderer',
       Cmd: ['node', dockerEntrypoint],
@@ -80,15 +87,18 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
       ],
       WorkingDir: '/app/adapter',
       HostConfig: {
-        AutoRemove: true,
+        AutoRemove: !debug.enabled,
         Binds: [
           `${runVolumeDirname}:/app/adapter` // image's node_modules are in /app. use 'em
         ],
         NetworkMode: networkName
       }
     })
+    debug('puppeteer container up')
     await staticServer.start()
+    debug('static container up')
     await puppeteerServer.start()
+    debug('puppeteer container started')
     staticServer.attach(
       { stream: true, stdout: true, stderr: true },
       (err, stream) => {
@@ -103,7 +113,12 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
         if (debug.enabled) stream.pipe(process.stdout)
       }
     )
-    await puppeteerServer.wait()
+    try {
+      await puppeteerServer.wait()
+    } catch (err) {
+      debug('puppetteer sever failed to capture snaps')
+      throw err
+    }
     return [ staticServer, puppeteerServer ]
   }
   async openSession (conf) {

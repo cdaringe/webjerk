@@ -24,7 +24,11 @@ export default class SlideyThing extends Component {
     // https://github.com/cezary/react-image-diff/blob/gh-pages/index.html
     return (
       <div>
-        <ImageDiff before={`a-${diff.name}`} after={`b-${diff.name}`} type={this.state.type} value={value} />
+        <ImageDiff
+          before={`a-${diff.name}`}
+          after={`b-${diff.name}`}
+          type={this.state.type}
+          value={value} />
         <br />
         <input
           type='range'

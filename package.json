@@ -48,7 +48,8 @@
   },
   "standard": {
     "ignore": [
-      "golden-site"
+      "golden-site",
+      "build"
     ]
   }
 }

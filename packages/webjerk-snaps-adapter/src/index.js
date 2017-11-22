@@ -10,6 +10,7 @@ var Docker = require('dockerode')
 var execa = require('execa')
 var pkgUp = require('pkg-up')
 var docker = new Docker()
+var url = require('url')
 
 class WebjerkSnapsAdapter {
   constructor (conf) {
@@ -63,10 +64,12 @@ class WebjerkSnapsAdapter {
     // invert control over to docker to resume execution of the snapping process
     let containers = []
     try {
+      debug('booting containers')
       containers = await this.bootContainers({
         docker,
         dockerEntrypoint: path.relative(runVolumeDirname, this.conf.adapterFilename),
         networkName,
+        port: url.parse(conf.url).port,
         runVolumeDirname,
         tempCaptureConfigFileRelative: path.relative(runVolumeDirname, tempCaptureConfigFile),
         tempSnapsRunDirRelative: path.relative(runVolumeDirname, tempSnapsRunDir),

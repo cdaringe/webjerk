@@ -77,7 +77,8 @@ class WebjerkSnapsAdapter {
       })
       invariant(containers && containers.length, 'bootContainers must provide an array of dockerode containers')
       await fs.remove(conf.snapRunRoot)
-      debug(`copying \n\t${tempSnapsRunDir}\n\t${conf.snapRunRoot}`)
+      var numRunFiles = (await fs.readdir(tempSnapsRunDir)).length
+      debug(`copying ${numRunFiles} files from:\n\t${tempSnapsRunDir} to\n\t${conf.snapRunRoot}`)
       await fs.move(tempSnapsRunDir, conf.snapRunRoot)
     } finally {
       debug(`trashing temporary run docker run directory ${tempSnapsRunDir}`)

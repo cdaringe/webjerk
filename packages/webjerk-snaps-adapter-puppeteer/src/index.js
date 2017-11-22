@@ -42,8 +42,8 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
     var staticServer = await docker.createContainer({
       Hostname: 'static',
       Image: 'cdaringe/httpster',
-      AttachStderr: debug.enabled,
-      AttachStdout: debug.enabled,
+      AttachStderr: true,
+      AttachStdout: true,
       HostConfig: {
         AutoRemove: !debug.enabled,
         Binds: [
@@ -76,8 +76,8 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
     var puppeteerServer = await docker.createContainer({
       Image: 'zenato/puppeteer-renderer',
       Cmd: ['node', dockerEntrypoint],
-      AttachStderr: debug.enabled,
-      AttachStdout: debug.enabled,
+      AttachStderr: true,
+      AttachStdout: true,
       Env: [
         `DEBUG=${process.env.DEBUG}`,
         `STATIC_SERVER_ID=${staticServer.id}`,
@@ -99,18 +99,24 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
     debug('static container up')
     await puppeteerServer.start()
     debug('puppeteer container started')
-    staticServer.attach(
-      { stream: true, stdout: true, stderr: true },
-      (err, stream) => {
-        if (err) throw err
-        if (debug.enabled) stream.pipe(process.stdout)
-      }
-    )
     puppeteerServer.attach(
       { stream: true, stdout: true, stderr: true },
       (err, stream) => {
         if (err) throw err
-        if (debug.enabled) stream.pipe(process.stdout)
+        if (debug.enabled) {
+          debug('piping puppeteer streams to this process')
+          puppeteerServer.modem.demuxStream(stream, process.stdout, process.stderr)
+        }
+      }
+    )
+    staticServer.attach(
+      { stream: true, stdout: true, stderr: true },
+      (err, stream) => {
+        if (err) throw err
+        if (debug.enabled) {
+          debug('piping static server streams to this process')
+          puppeteerServer.modem.demuxStream(stream, process.stdout, process.stderr)
+        }
       }
     )
     try {

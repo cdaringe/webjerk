@@ -64,12 +64,12 @@ Object.assign(ImageSetDiffer.prototype, {
     )
     await this._handleCompareResults(diffsAndErrors)
   },
-  _copyRunImagesToRefImages () {
+  async _copyRunImagesToRefImages () {
     debug('images using as ref:', this._runBasenames)
-    return Promise.all(this._runBasenames.map(tBasname => {
+    await Promise.all(this._runBasenames.map(tBasname => {
       return fs.copy(path.join(this.conf.runDir, tBasname), path.join(this.conf.refDir, tBasname))
     }))
-    .then(() => { this._refBasenames = this._runBasenames })
+    this._refBasenames = this._runBasenames
   },
   _handleCompareResults (res) {
     var errors = res.filter(r => r instanceof Error)

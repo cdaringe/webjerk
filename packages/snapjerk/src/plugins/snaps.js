@@ -1,6 +1,5 @@
 'use strict'
 
-var defaultsDeep = require('lodash/defaultsDeep')
 var snaps = require('webjerk-snaps')
 var name = 'webjerk-snaps'
 var debug = require('debug')(`webjerk:snapjerk:plugin:${name}`)

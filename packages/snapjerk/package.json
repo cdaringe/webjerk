@@ -7,12 +7,9 @@
   "author": "cdaringe",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.17.0",
-    "bluebird": "^3.5.1",
     "debug": "^3.1.0",
     "freeport": "^1.0.5",
     "fs-extra": "^4.0.2",
-    "httpster": "^1.0.3",
     "meow": "^3.7.0",
     "perish": "^1.0.1",
     "webjerk": "^0.2.8",

@@ -14,10 +14,10 @@ var goldenSnaps = [
   {
     selector: '#diff-1',
     name: 'bub',
-    onPreSnap: function (snapDefinition, browserName, session, conf) {
+    onPreSnap: function (snapDefinition, session, adapter) {
       // warning: this code is run in a docker container!
       var onPreSnapTestFile = path.resolve(
-        process.env.RELATIVE_SNAPS_RUN_DIR,
+        process.env.SCREENSHOT_DIRNAME,
         `onPreSnap-${snapDefinition.name}.txt`
       )
       debug(`writing: ${onPreSnapTestFile}`) // eslint-disable-line

@@ -13,8 +13,9 @@
     "fs-extra": "^4.0.2",
     "invariant": "^2.2.2",
     "perish": "^1.0.1",
-    "pkg-up": "^2.0.0",
-    "serialize-javascript": "^1.4.0"
+    "serialize-javascript": "^1.4.0",
+    "shebang-loader": "0.0.1",
+    "webpack": "^3.8.1"
   },
   "repository": {
     "type": "git",

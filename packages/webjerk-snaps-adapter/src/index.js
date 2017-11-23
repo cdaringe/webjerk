@@ -8,9 +8,10 @@ var serialize = require('serialize-javascript')
 var bb = require('bluebird')
 var Docker = require('dockerode')
 var execa = require('execa')
-var pkgUp = require('pkg-up')
 var docker = new Docker()
 var url = require('url')
+var webpack = require('webpack')
+var util = require('util')
 
 class WebjerkSnapsAdapter {
   constructor (conf) {
@@ -33,11 +34,6 @@ class WebjerkSnapsAdapter {
     return eval(`(${serializedJavascript})`) // eslint-disable-line
   }
   async capture (conf) {
-    // we need runVolumeDirname to include both:
-    // - this package's source
-    // - thes used adapter's source
-    // in all liklihood, the packages will be siblings, so let's try it :X
-    var runVolumeDirname = path.dirname(await pkgUp(path.resolve(__dirname, '..', '..')))
     var serializedConf = serialize(conf)
     try {
       this.deserialize(serializedConf)
@@ -48,11 +44,12 @@ class WebjerkSnapsAdapter {
         `docker context (i.e. a different process).\n\n${err.message}`
       ].join(' '))
     }
-    var tempDir = path.resolve(__dirname, `.tmp-${Math.random()}`)
-    var tempStaticDirname = path.resolve(tempDir, 'static')
-    var tempCaptureConfigFile = path.join(tempDir, 'capture-config.js')
-    var tempSnapsRunDir = path.resolve(tempDir, 'snaps', 'run', Math.random().toString().substr(2))
-    await bb.map([tempDir, tempStaticDirname, tempSnapsRunDir], dir => fs.mkdirp(dir))
+    var runDirname = path.resolve(__dirname, `.tmp-${Math.random()}`)
+    var tempDockerEntryFilename = await this.getEntry({ entry: this.conf.adapterFilename, root: runDirname }) // creates `${runDirname}/entry.js`
+    var tempStaticDirname = path.resolve(runDirname, 'static')
+    var tempCaptureConfigFile = path.join(runDirname, 'capture-config.js')
+    var tempSnapsRunDir = path.resolve(runDirname, 'snaps', 'run', Math.random().toString().substr(2))
+    await bb.map([runDirname, tempStaticDirname, tempSnapsRunDir], dir => fs.mkdirp(dir))
     await fs.copy(conf.staticDirectory, tempStaticDirname)
     debug('writing temporary config to disk for docker to pickup', conf)
     await fs.writeFile(tempCaptureConfigFile, serializedConf)
@@ -67,13 +64,17 @@ class WebjerkSnapsAdapter {
       debug('booting containers')
       containers = await this.bootContainers({
         docker,
-        dockerEntrypoint: path.relative(runVolumeDirname, this.conf.adapterFilename),
         networkName,
-        port: url.parse(conf.url).port,
-        runVolumeDirname,
-        tempCaptureConfigFileRelative: path.relative(runVolumeDirname, tempCaptureConfigFile),
-        tempSnapsRunDirRelative: path.relative(runVolumeDirname, tempSnapsRunDir),
-        tempStaticDirname
+        paths: {
+          rootDirname: runDirname,
+          relativeToRoot: {
+            configFilename: path.relative(runDirname, tempCaptureConfigFile),
+            entryFilename: path.relative(runDirname, tempDockerEntryFilename),
+            screenshotsDirname: path.relative(runDirname, tempSnapsRunDir),
+            staticDirname: path.relative(runDirname, tempStaticDirname)
+          }
+        },
+        port: url.parse(conf.url).port
       })
       invariant(containers && containers.length, 'bootContainers must provide an array of dockerode containers')
       await fs.remove(conf.snapRunRoot)
@@ -82,15 +83,45 @@ class WebjerkSnapsAdapter {
       await fs.move(tempSnapsRunDir, conf.snapRunRoot)
     } finally {
       debug(`trashing temporary run docker run directory ${tempSnapsRunDir}`)
-      await fs.remove(tempDir)
+      await fs.remove(runDirname)
       await Promise.all(containers.map(container => permitFail(() => container.stop())))
       await network.remove()
     }
   }
+  async getEntry ({ entry, root }) {
+    debug('bunding webjerk-snaps-adapter code for injection into docker container')
+    await util.promisify(webpack.bind(webpack))({
+      target: 'node',
+      externals: [
+        function (context, request, cb) {
+          return (/^puppeteer$/.test(request))
+            ? cb(null, 'commonjs ' + request)
+            : cb()
+        }
+      ],
+      entry,
+      output: {
+        path: root,
+        filename: 'entry.js'
+      },
+      module: {
+        rules: [{
+          test: /\.(js|jsx|mjs)$/,
+          loader: require.resolve('shebang-loader')
+        }]
+      }
+    })
+    var entryFilename = path.join(root, 'entry.js')
+    if (!(await fs.exists(entryFilename))) {
+      throw new Error('entry.js not written')
+    }
+    return entryFilename
+  }
   async rehydrate (Adapter) {
     require('perish') // force all adapters to exit on unhandled rejection
-    invariant(process.env.RELATIVE_CONFIG_FILE, 'adapter did not set RELATIVE_CONFIG_FILE to deserialize')
-    var serializedConf = await fs.readFile(process.env.RELATIVE_CONFIG_FILE)
+    invariant(process.env.CONFIG_FILENAME, 'adapter did not set CONFIG_FILENAME to deserialize')
+    invariant(process.env.SCREENSHOT_DIRNAME, 'adapter did not set SCREENSHOT_DIRNAME')
+    var serializedConf = await fs.readFile(process.env.CONFIG_FILENAME)
     var conf = WebjerkSnapsAdapter.prototype.deserialize(serializedConf)
     var adapter = new Adapter(conf)
     adapter.dockerCapture()
@@ -104,14 +135,14 @@ class WebjerkSnapsAdapter {
       'openSession must provide a `snapDefinitions` array'
     )
     const { snapDefinitions } = session
-    debug('capturing snaps')
+    debug('begin capturing snaps')
     for (var i in snapDefinitions) {
       var snapDefinition = snapDefinitions[i]
       if (snapDefinition.onPreSnap) {
         debug(`onPreSnap: ${snapDefinition.name}`)
         await snapDefinition.onPreSnap(snapDefinition, session, this)
       }
-      var targetPngFilename = path.join(process.env.RELATIVE_SNAPS_RUN_DIR, `${snapDefinition.name}-chrome.png`)
+      var targetPngFilename = path.join(process.env.SCREENSHOT_DIRNAME, `${snapDefinition.name}-chrome.png`)
       debug(`capturing snap ${snapDefinition.selector} (${targetPngFilename})`)
       await this.captureSnap({
         session,

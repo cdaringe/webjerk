@@ -2,6 +2,7 @@
 
 var debug = require('debug')('webjerk:snaps-adapter-puppeteer')
 var WebjerkSnapsAdapter = require('webjerk-snaps-adapter')
+var path = require('path')
 
 class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
   constructor (conf) {
@@ -21,9 +22,6 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
 
   get puppeteer () {
     if (!this._puppeteer) {
-      // require this dynamically as puppeteer is not in our code--it's in the
-      // docker image's node_modules.  HACKS! dirty rotten... effecient
-      // effective hacks :)
       this._puppeteer = require('puppeteer')
     }
     return this._puppeteer
@@ -31,13 +29,17 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
   async bootContainers (opts) {
     const {
       docker,
-      dockerEntrypoint,
       networkName,
-      port,
-      runVolumeDirname,
-      tempCaptureConfigFileRelative,
-      tempSnapsRunDirRelative,
-      tempStaticDirname
+      paths: {
+        rootDirname,
+        relativeToRoot: {
+          configFilename,
+          entryFilename,
+          screenshotsDirname,
+          staticDirname
+        }
+      },
+      port
     } = opts
     var staticServer = await docker.createContainer({
       Hostname: 'static',
@@ -47,7 +49,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
       HostConfig: {
         AutoRemove: !debug.enabled,
         Binds: [
-          `${tempStaticDirname}:/public`
+          `${path.join(rootDirname, staticDirname)}:/public`
         ],
         PortBindings: Object.assign(
           {},
@@ -73,23 +75,23 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
       }
     })
     debug('static container up')
+
     var puppeteerServer = await docker.createContainer({
       Image: 'zenato/puppeteer-renderer',
-      Cmd: ['node', dockerEntrypoint],
+      Cmd: ['node', path.join('/app/snapjerk', entryFilename)],
       AttachStderr: true,
       AttachStdout: true,
       Env: [
+        `CONFIG_FILENAME=${path.join('/app/snapjerk', configFilename)}`,
+        `SCREENSHOT_DIRNAME=${path.join('/app/snapjerk', screenshotsDirname)}`,
         `DEBUG=${process.env.DEBUG}`,
-        `STATIC_SERVER_ID=${staticServer.id}`,
-        `RELATIVE_CONFIG_FILE=${tempCaptureConfigFileRelative}`,
-        `RELATIVE_SNAPS_RUN_DIR=${tempSnapsRunDirRelative}`,
-        `STATIC=${tempStaticDirname}`
+        `STATIC_SERVER_ID=${staticServer.id}`
       ],
-      WorkingDir: '/app/adapter',
+      WorkingDir: '/app/snapjerk',
       HostConfig: {
         AutoRemove: !debug.enabled,
         Binds: [
-          `${runVolumeDirname}:/app/adapter` // image's node_modules are in /app. use 'em
+          `${rootDirname}:/app/snapjerk` // image's node_modules are in /app. use 'em
         ],
         NetworkMode: networkName
       }

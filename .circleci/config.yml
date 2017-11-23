@@ -11,24 +11,19 @@ jobs:
     steps:
       - checkout
 
-      # - run:
-      #     name: install nvm
-      #     command: |
-      #       # curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash || 1
-      #       export NVM_DIR="/opt/circleci/.nvm"
-      #       . "$NVM_DIR/nvm.sh"  # This loads nvm
-
       - run:
-          name: install node@latest
+          name: Install node@9.2.0
           command: |
-            export NVM_DIR="/opt/circleci/.nvm" && . "$NVM_DIR/nvm.sh" && nvm install node
-            node -v
+            set +e
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install v9.2.0
+            nvm alias default v9.2.0
 
-      - run:
-          name: sanity check
-          command: |
-            node -v
-            nvm use node && node -v
+            # Each step uses the same `$BASH_ENV`, so need to modify it
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"" >> $BASH_ENV
 
       # use a primary image that already has Docker (recommended)
       # or install it during a build like we do here

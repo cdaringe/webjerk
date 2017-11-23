@@ -12,6 +12,7 @@ var docker = new Docker()
 var url = require('url')
 var webpack = require('webpack')
 var util = require('util')
+const dirTree = require('directory-tree')
 
 class WebjerkSnapsAdapter {
   constructor (conf) {
@@ -45,7 +46,6 @@ class WebjerkSnapsAdapter {
       ].join(' '))
     }
     var runDirname = path.resolve(__dirname, `.tmp-${Math.random()}`)
-    var tempDockerEntryFilename = await this.getEntry({ entry: this.conf.adapterFilename, root: runDirname }) // creates `${runDirname}/entry.js`
     var tempStaticDirname = path.resolve(runDirname, 'static')
     var tempCaptureConfigFile = path.join(runDirname, 'capture-config.js')
     var tempSnapsRunDir = path.resolve(runDirname, 'snaps', 'run', Math.random().toString().substr(2))
@@ -53,6 +53,8 @@ class WebjerkSnapsAdapter {
     await fs.copy(conf.staticDirectory, tempStaticDirname)
     debug('writing temporary config to disk for docker to pickup', conf)
     await fs.writeFile(tempCaptureConfigFile, serializedConf)
+    var tempDockerEntryFilename = await this.getEntry({ entry: this.conf.adapterFilename, root: runDirname }) // creates `${runDirname}/entry.js`
+    if (debug.enabled) debug(dirTree(runDirname))
 
     var networkName = `snapjerk-${Math.random().toString().substring(2, 10)}`
     var network = await docker.createNetwork({ Name: networkName })

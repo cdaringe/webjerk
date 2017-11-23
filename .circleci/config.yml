@@ -22,8 +22,13 @@ jobs:
           name: install node@latest
           command: |
             export NVM_DIR="/opt/circleci/.nvm" && . "$NVM_DIR/nvm.sh" && nvm install node
-            # nvm use node
             node -v
+
+      - run:
+          name: sanity check
+          command: |
+            node -v
+            nvm use node && node -v
 
       # use a primary image that already has Docker (recommended)
       # or install it during a build like we do here
@@ -45,7 +50,7 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: npm install --verbose
+      - run: nvm use node && npm install --verbose
 
       - save_cache:
           paths:
@@ -54,6 +59,6 @@ jobs:
 
       # run tests!
       - run: docker network prune --force
-      - run: npm run lint
-      - run: DEBUG=webjerk* npm test -- --verbose
+      - run: nvm use node && npm run lint
+      - run: nvm use node && DEBUG=webjerk* npm test -- --verbose
 

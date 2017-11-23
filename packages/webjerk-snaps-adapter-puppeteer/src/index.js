@@ -96,11 +96,6 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
         NetworkMode: networkName
       }
     })
-    debug('puppeteer container up')
-    await staticServer.start()
-    debug('static container up')
-    await puppeteerServer.start()
-    debug('puppeteer container started')
     puppeteerServer.attach(
       { stream: true, stdout: true, stderr: true },
       (err, stream) => {
@@ -121,6 +116,11 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
         }
       }
     )
+    debug('puppeteer container up')
+    await staticServer.start()
+    debug('static container up')
+    await puppeteerServer.start()
+    debug('puppeteer container started')
     try {
       await puppeteerServer.wait()
     } catch (err) {

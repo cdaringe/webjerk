@@ -85,6 +85,7 @@ class WebjerkSnapsAdapter {
       debug(`trashing temporary run docker run directory ${tempSnapsRunDir}`)
       await fs.remove(runDirname)
       await Promise.all(containers.map(container => permitFail(() => container.stop())))
+      debug('trashing temporary docker network')
       await network.remove()
     }
   }

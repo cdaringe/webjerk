@@ -143,6 +143,7 @@ Object.assign(ImageSetDiffer.prototype, {
     return reporter({ differences: enriched, dest: path.join(this.conf.diffDir, 'report') })
   },
   async run () {
+    debug('running image diff algorithm')
     await this.readTestState()
     const partitions = await this._partitionImageBasenames()
     await this.validateImagePartitions(partitions)

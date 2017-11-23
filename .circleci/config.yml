@@ -14,7 +14,7 @@ jobs:
       - run:
           name: install node
           command: |
-            curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+            curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
             sudo apt-get install -y nodejs
 
       # use a primary image that already has Docker (recommended)

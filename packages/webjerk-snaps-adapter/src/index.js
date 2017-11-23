@@ -115,6 +115,7 @@ class WebjerkSnapsAdapter {
     if (!(await fs.exists(entryFilename))) {
       throw new Error('entry.js not written')
     }
+    debug(`docker entry bundle written to host: ${entryFilename}`)
     return entryFilename
   }
   async rehydrate (Adapter) {
@@ -122,6 +123,11 @@ class WebjerkSnapsAdapter {
     invariant(process.env.CONFIG_FILENAME, 'adapter did not set CONFIG_FILENAME to deserialize')
     invariant(process.env.SCREENSHOT_DIRNAME, 'adapter did not set SCREENSHOT_DIRNAME')
     var serializedConf = await fs.readFile(process.env.CONFIG_FILENAME)
+    debug(`config file in docker detected: ${path.join(process.cwd(), process.env.CONFIG_FILENAME)}`)
+    if (debug.enabled) {
+      var configDirContents = await fs.readdir(path.dirname(process.env.CONFIG_FILENAME))
+      debug(`config dir contents: `, configDirContents)
+    }
     var conf = WebjerkSnapsAdapter.prototype.deserialize(serializedConf)
     var adapter = new Adapter(conf)
     adapter.dockerCapture()

@@ -14,11 +14,11 @@ jobs:
       - run:
           name: install node
           command: |
-            # curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
             # export NVM_DIR="$HOME/.nvm"
-            nvm install node
+            # nvm install node
             # nvm use node
-            node -v
+            # node -v
 
       # use a primary image that already has Docker (recommended)
       # or install it during a build like we do here

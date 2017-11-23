@@ -80,7 +80,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
     debug(`instructing puppeteer to load 'node ${puppeteerEntryBundle}' on boot`)
     var puppeteerServer = await docker.createContainer({
       Image: 'zenato/puppeteer-renderer',
-      Cmd: ['ls', '-al', '/app/snapjerk'],
+      Cmd: ['node', puppeteerEntryBundle],
       AttachStderr: true,
       AttachStdout: true,
       Env: [

@@ -143,6 +143,10 @@ class WebjerkSnapsAdapter {
       session && Array.isArray(session.snapDefinitions),
       'openSession must provide a `snapDefinitions` array'
     )
+    invariant(
+      session.snapDefinitions.length,
+      'snapDefinitions must not be empty'
+    )
     const { snapDefinitions } = session
     debug('begin capturing snaps')
     for (var i in snapDefinitions) {

@@ -128,7 +128,7 @@ Object.assign(ImageSetDiffer.prototype, {
       this.conf.runDir
     ].map(f => fs.readdir(f)))
     debug('test state - ref images found:', ref)
-    debug('test state - run images found:', ref)
+    debug('test state - run images found:', run)
     this._refBasenames = ref.filter(f => f.match(/\.png$/))
     this._runBasenames = run.filter(f => f.match(/\.png$/))
   },

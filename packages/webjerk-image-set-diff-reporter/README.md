@@ -9,7 +9,7 @@ generates a static website displaying sets of image differences.
 plays nice with `webjerk-image-set-diff`, but has no tight coupling or interest directly in it!
 
 ```js
-// see test/index.js for more!
+// see test/index.js for a more complete example
 var reporter = require('webjerk-image-set-diff-reporter')
 reporter({
   differences: [

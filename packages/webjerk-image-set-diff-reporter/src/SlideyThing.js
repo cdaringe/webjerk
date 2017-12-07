@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import ImageDiff from 'react-image-diff'
+import ImageDiff from 'cdaringe-react-image-diff'
 
 export default class SlideyThing extends Component {
   constructor (props) {

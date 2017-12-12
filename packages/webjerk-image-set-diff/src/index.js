@@ -153,6 +153,7 @@ Object.assign(ImageSetDiffer.prototype, {
       await this.compare()
     } catch (err) {
       if (err.code === 'EIMAGEDIFFS') {
+        debug('EIMAGEDIFFS', err.differences)
         await this.report(err.differences)
       }
       throw err

@@ -11,7 +11,7 @@ module.exports = async function (opts) {
   return {
     register: snaps,
     config: Object.assign({
-      url: `http://static:${port}`,
+      url: opts.url || `http://static:${port}`,
       snapDefinitions: opts.snapDefinitions,
       snapDefinitionsFromWindow: opts.snapDefinitionsFromWindow,
       staticDirectory: opts.staticDirectory

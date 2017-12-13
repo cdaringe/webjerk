@@ -50,7 +50,7 @@ class WebjerkSnapsAdapter {
     var tempCaptureConfigFile = path.join(runDirname, 'capture-config.js')
     var tempSnapsRunDir = path.resolve(runDirname, 'snaps', 'run', Math.random().toString().substr(2))
     await bb.map([runDirname, tempStaticDirname, tempSnapsRunDir], dir => fs.mkdirp(dir))
-    await fs.copy(conf.staticDirectory, tempStaticDirname)
+    if (conf.staticDirectory) await fs.copy(conf.staticDirectory, tempStaticDirname)
     debug('writing temporary config to disk for docker to pickup', conf)
     await fs.writeFile(tempCaptureConfigFile, serializedConf)
     var tempDockerEntryFilename = await this.getEntry({ entry: this.conf.adapterFilename, root: runDirname }) // creates `${runDirname}/entry.js`
@@ -60,7 +60,8 @@ class WebjerkSnapsAdapter {
     var network = await docker.createNetwork({ Name: networkName })
     await this.pullImages()
 
-    // invert control over to docker to resume execution of the snapping process
+    // booting containers inverts control over to docker to resume
+    // execution of the snapping process
     let containers = []
     try {
       debug('booting containers')
@@ -73,7 +74,8 @@ class WebjerkSnapsAdapter {
             configFilename: path.relative(runDirname, tempCaptureConfigFile),
             entryFilename: path.relative(runDirname, tempDockerEntryFilename),
             screenshotsDirname: path.relative(runDirname, tempSnapsRunDir),
-            staticDirname: path.relative(runDirname, tempStaticDirname)
+            staticDirname: conf.staticDirectory ? path.relative(runDirname, tempStaticDirname) : null,
+            url: conf.url
           }
         },
         port: url.parse(conf.url).port

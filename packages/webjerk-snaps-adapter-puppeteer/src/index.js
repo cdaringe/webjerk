@@ -41,41 +41,44 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
       },
       port
     } = opts
-    var staticServer = await docker.createContainer({
-      Hostname: 'static',
-      Image: 'cdaringe/httpster',
-      AttachStderr: true,
-      AttachStdout: true,
-      HostConfig: {
-        AutoRemove: !debug.enabled,
-        Binds: [
-          `${path.join(rootDirname, staticDirname)}:/public`
+    var staticServer
+
+    if (staticDirname) {
+      staticServer = await docker.createContainer({
+        Hostname: 'static',
+        Image: 'cdaringe/httpster',
+        AttachStderr: true,
+        AttachStdout: true,
+        HostConfig: {
+          AutoRemove: !debug.enabled,
+          Binds: [
+            `${path.join(rootDirname, staticDirname)}:/public`
+          ],
+          PortBindings: Object.assign(
+            {},
+            debug.enabled
+              ? {[`${port}/tcp`]: [{ HostPort: port }]}
+              : {}
+          )
+        },
+        ENV: [
+          `PORT=${port}`
         ],
-        PortBindings: Object.assign(
-          {},
-          debug.enabled
-            ? {[`${port}/tcp`]: [{ HostPort: port }]}
-            : {}
-        )
-      },
-      ENV: [
-        `PORT=${port}`
-      ],
-      ExposedPorts: {
-        [`${port}/tcp`]: {}
-      },
-      NetworkingConfig: {
-        EndpointsConfig: {
-          [networkName]: {
-            Aliases: [
-              'static'
-            ]
+        ExposedPorts: {
+          [`${port}/tcp`]: {}
+        },
+        NetworkingConfig: {
+          EndpointsConfig: {
+            [networkName]: {
+              Aliases: [
+                'static'
+              ]
+            }
           }
         }
-      }
-    })
-    debug('static container up')
-
+      })
+      debug('static container up')
+    }
     var puppeteerEntryBundle = path.join('/app/snapjerk', entryFilename)
     debug(`instructing puppeteer to load 'node ${puppeteerEntryBundle}' on boot`)
     var puppeteerServer = await docker.createContainer({
@@ -86,8 +89,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
       Env: [
         `CONFIG_FILENAME=${path.join('/app/snapjerk', configFilename)}`,
         `SCREENSHOT_DIRNAME=${path.join('/app/snapjerk', screenshotsDirname)}`,
-        `DEBUG=${process.env.DEBUG}`,
-        `STATIC_SERVER_ID=${staticServer.id}`
+        `DEBUG=${process.env.DEBUG}`
       ],
       WorkingDir: '/app/snapjerk',
       HostConfig: {
@@ -108,19 +110,21 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
         }
       }
     )
-    staticServer.attach(
-      { stream: true, stdout: true, stderr: true },
-      (err, stream) => {
-        if (err) throw err
-        if (debug.enabled) {
-          debug('piping static server streams to this process')
-          puppeteerServer.modem.demuxStream(stream, process.stdout, process.stderr)
+    if (staticDirname) {
+      staticServer.attach(
+        { stream: true, stdout: true, stderr: true },
+        (err, stream) => {
+          if (err) throw err
+          if (debug.enabled) {
+            debug('piping static server streams to this process')
+            puppeteerServer.modem.demuxStream(stream, process.stdout, process.stderr)
+          }
         }
-      }
-    )
-    debug('puppeteer container up')
-    await staticServer.start()
-    debug('static container up')
+      )
+      debug('puppeteer container up')
+      await staticServer.start()
+      debug('static container up')
+    }
     await puppeteerServer.start()
     debug('puppeteer container started')
     try {
@@ -129,7 +133,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
       debug('puppetteer sever failed to capture snaps')
       throw err
     }
-    return [ staticServer, puppeteerServer ]
+    return [ staticServer, puppeteerServer ].filter(i => i)
   }
   async openSession (conf) {
     let { snapDefinitions, snapDefinitionsFromWindow } = conf

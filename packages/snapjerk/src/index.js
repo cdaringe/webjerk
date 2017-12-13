@@ -11,22 +11,25 @@ var fs = require('fs-extra')
 /**
  * snapjerk.
  * @param {object} opts
- * @param {string} opts.staticDirectory
+ * @param {string} [opts.staticDirectory]
+ * @param {string} [opts.url]
  * @param {object} opts.snapDefinitions see webjerk-snaps for more
  * @param {function} [opts.snapDefinitionsFromWindow] can be used instead of snap snapDefinitions. see webjerk-snaps for more
  * @param {string[]} [browsers=['chrome']]
  * @returns {Promise}
  */
 async function snapjerk (opts) {
-  if (!opts.staticDirectory) throw new Error('missing staticDirectory')
+  if (!opts.staticDirectory && !opts.url) throw new Error('missing staticDirectory')
   var stat
-  try {
-    stat = await fs.lstat(opts.staticDirectory)
-  } catch (err) {
-    console.error(err)
-    throw new Error(`static directory ${opts.staticDirectory} is invalid`)
+  if (opts.staticDirectory) {
+    try {
+      stat = await fs.lstat(opts.staticDirectory)
+    } catch (err) {
+      console.error(err)
+      throw new Error(`static directory ${opts.staticDirectory} is invalid`)
+    }
+    if (!stat.isDirectory()) throw new Error(`static directory ${opts.staticDirectory} is not a directory`)
   }
-  if (!stat.isDirectory()) throw new Error(`static directory ${opts.staticDirectory} is not a directory`)
   if (!opts.snapDefinitions && !opts.snapDefinitionsFromWindow) {
     throw new Error('snapDefinitions or snapDefinitionsFromWindow required')
   }

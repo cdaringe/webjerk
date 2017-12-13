@@ -12,7 +12,10 @@ var conf = {}
 
 const cli = meow(`
 Usage
-// simplest execution
+// simplest execution, snaps from website
+$ snapjerk -u https://google.com -d '[{ selector: "body", name: "body" }]'
+
+// simplest execution, snaps from static website dir
 $ snapjerk -s /path/to/static-site-directory -d '[{ selector: "body", name: "body" }]'
 
 // using snapjerk.config.js
@@ -22,6 +25,7 @@ $ snapjerk
 $ snapjerk -c /path/to/snapjerk/config.js
 
 Options
+-u, --url <url>
 -s, --static <directory>
 -c, --config <filename>
 -d, --definitions <snap-definitions>
@@ -37,6 +41,9 @@ try {
   if (configFilename) throw new Error(`config file ${configFilename} invalid`)
   // pass
 }
+
+var url = cli.flags.u || cli.flags.url
+if (url) conf.url = url
 
 var staticDirectory = (cli.flags.s || cli.flags.static) ? path.resolve(cli.flags.s || cli.flags.static) : null
 if (staticDirectory) conf.staticDirectory = staticDirectory

@@ -1,7 +1,7 @@
 {
   "name": "webjerk-snaps-adapter",
   "description": "adapter class for webjerk-snaps adapters",
-  "version": "0.2.11",
+  "version": "0.2.15",
   "main": "src/index.js",
   "license": "MIT",
   "author": "cdaringe",

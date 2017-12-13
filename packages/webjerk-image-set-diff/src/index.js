@@ -23,7 +23,7 @@ function ImageSetDiffer (conf) {
   if (!conf) throw new Error('missing config')
   if (!conf.refDir || !conf.runDir) throw new Error('refDir and runDir are required')
   if (!conf.diffDir) conf.diffDir = `${path.resolve(conf.runDir)}-diff`
-  if (isNil(conf.allowNewImages)) conf.allowNewImages = process.env.WEBJERK_ALLOW_NEW_IMAGES === undefined ? true : !!process.env.WEBJERK_ALLOW_NEW_IMAGES
+  if (isNil(conf.allowNewImages)) conf.allowNewImages = process.env.WEBJERK_ALLOW_NEW_IMAGES === undefined ? false : !!process.env.WEBJERK_ALLOW_NEW_IMAGES
   if (isNil(conf.approveChanges)) conf.approveChanges = process.env.WEBJERK_APPROVE_CHANGES === undefined ? false : !!process.env.WEBJERK_APPROVE_CHANGES
   Object.assign(this, { conf })
 }
@@ -82,12 +82,21 @@ Object.assign(ImageSetDiffer.prototype, {
     }
     return res
   },
-  _handleNewImages () {
+
+  /**
+   * Handle new, run images with respect to the current ref, golden set
+   * @param {Object} [opts]
+   * @param {Boolean} [allowNewImages=false]
+   * @returns {Promise}
+   */
+  async handleNewImages (opts) {
+    opts = opts || {}
     var { newImages } = this._imagePartitions
+    debug(`accepting new images: ${this.conf.allowNewImages}`)
     if (!newImages) throw new Error('missing image group')
     if (!newImages.length) return Promise.resolve()
     console.log(`${newImages.length} new images detected`)
-    if (!this.conf.allowNewImages) {
+    if (!opts.allowNewImages && !this.conf.allowNewImages) {
       var err = new Error([
         'new images detected:',
         newImages.map(img => `\t${img}\n`),
@@ -96,20 +105,18 @@ Object.assign(ImageSetDiffer.prototype, {
       err.code = 'ENEWIMAGESFORBIDDEN'
       throw err
     }
-    return Promise.all(newImages.map(tBasname => {
-      return fs.copy(
-        path.join(this.conf.runDir, tBasname),
-        path.join(this.conf.refDir, tBasname)
-      )
+    await Promise.all(newImages.map(tBasname => {
+      var src = path.join(this.conf.runDir, tBasname)
+      var dest = path.join(this.conf.refDir, tBasname)
+      return fs.copy(src, dest)
     }))
-    .then(() => { this._refBasenames = this._runBasenames })
+    this._refBasenames = this._runBasenames
   },
-  _maybeApproveChanges () {
+  async maybeApproveChanges () {
     if (this.conf.approveChanges) {
       debug('images changes approved')
       return this._copyRunImagesToRefImages()
     }
-    return Promise.resolve()
   },
   _partitionImageBasenames () {
     var refBasenames = this._refBasenames
@@ -117,7 +124,7 @@ Object.assign(ImageSetDiffer.prototype, {
     var missingImages = without.apply(null, [refBasenames].concat(runBasenames))
     var toCompare = intersection(refBasenames, runBasenames)
     var newImages = without.apply(null, [runBasenames].concat(refBasenames))
-    var imagePartitions = { missingImages, toCompare, newImages }
+    var imagePartitions = { existingImages: refBasenames, missingImages, toCompare, newImages }
     Object.assign(this, { _imagePartitions: imagePartitions })
     debug('imagePartitions', imagePartitions)
     return imagePartitions
@@ -143,12 +150,19 @@ Object.assign(ImageSetDiffer.prototype, {
     return reporter({ differences: enriched, dest: path.join(this.conf.diffDir, 'report') })
   },
   async run () {
+    let toThrow = []
     debug('running image diff algorithm')
     await this.readTestState()
     const partitions = await this._partitionImageBasenames()
     await this.validateImagePartitions(partitions)
-    await this.upsertReferenceImages()
-    await this._maybeApproveChanges()
+    const didUpsertNewImages = await this.upsertReferenceImages()
+    try {
+      await this.handleNewImages({ allowNewImages: didUpsertNewImages })
+    } catch (err) {
+      if (err.code === 'ENEWIMAGESFORBIDDEN') toThrow.push(err)
+      else throw err
+    }
+    await this.maybeApproveChanges()
     try {
       await this.compare()
     } catch (err) {
@@ -156,19 +170,28 @@ Object.assign(ImageSetDiffer.prototype, {
         debug('EIMAGEDIFFS', err.differences)
         await this.report(err.differences)
       }
+      toThrow.push(err)
+    }
+    if (toThrow.length) {
+      let err = new Error('image set changes detected')
+      err.code = 'ECHANGES'
+      err.errors = toThrow
       throw err
     }
   },
-  upsertReferenceImages () {
-    var { newImages } = this._imagePartitions
-    if (!newImages) throw new Error('missing image group')
-    if (this._refBasenames.length) {
-      // reference images are already in place. handle updates
-      if (newImages.length) return this._handleNewImages()
-      return Promise.resolve()
+  /**
+   * @returns didUpsertNewImages
+   */
+  async upsertReferenceImages () {
+    var { existingImages, newImages } = this._imagePartitions
+    if (existingImages.length) {
+      debug('ref images detected. skipping upsert of run images')
+      return false
     }
+    if (!newImages) throw new Error('missing image group')
     debug('no reference images found. setting reference images from run.')
-    return this._copyRunImagesToRefImages()
+    await this._copyRunImagesToRefImages()
+    return true
   },
   validateImagePartitions ({ missingImages, toCompare, newImages }) {
     if (!missingImages || !toCompare || !newImages) throw new Error('missing image group')

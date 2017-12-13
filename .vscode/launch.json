@@ -42,7 +42,10 @@
       "type": "node",
       "request": "launch",
       "name": "launch file",
-      "program": "${file}"
+      "program": "${file}",
+      "skipFiles": [
+        "<node_internals>/**/*.js"
+      ]
     }
   ]
 }

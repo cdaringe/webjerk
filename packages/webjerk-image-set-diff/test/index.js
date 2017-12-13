@@ -23,24 +23,26 @@ tape('case-no-dirs', t => {
   })
 })
 
-tape('case-no-refs', t => {
+tape('case-no-refs', async t => {
   t.plan(3)
   var testRoot = path.resolve(__dirname, 'case-no-refs')
   var refDir = path.join(testRoot, 'ref')
   var runDir = path.join(testRoot, 'run')
   var idr = new ImageSetDiffer({ refDir, runDir })
-  return Promise.resolve()
-  .then(() => fs.removeAsync(refDir))
-  .then(() => fs.mkdirpAsync(refDir))
-  .then(() => fs.readdirAsync(refDir))
-  .then(files => t.equals(0, files.length, 'ref dir empty'))
-  .then(() => idr.run())
-  .then(() => fs.readdirAsync(refDir))
-  .then(files => t.equals(2, files.length, 'ref dir populated'))
-  .then(() => fs.removeAsync(refDir))
-  .then(() => fs.mkdirpAsync(refDir))
-  .then(() => t.pass('teardown'))
-  .catch(t.end)
+  await fs.removeAsync(refDir)
+  await fs.mkdirpAsync(refDir)
+  var files = await fs.readdirAsync(refDir)
+  t.equals(0, files.length, 'ref dir empty')
+  try {
+    await idr.run()
+  } catch (err) {
+    return t.end(err)
+  }
+  files = await fs.readdirAsync(refDir)
+  t.equals(2, files.length, 'ref dir populated')
+  await fs.removeAsync(refDir)
+  await fs.mkdirpAsync(refDir)
+  t.pass('teardown')
 })
 
 tape('case-happy-matches', t => {
@@ -67,8 +69,8 @@ tape('case-unhappy-matches', t => {
   return Promise.resolve()
   .then(() => idr.run())
   .catch(err => {
-    t.equals(err.code, 'EIMAGEDIFFS', 'image diffs detected')
-    t.ok(Array.isArray(err.differences), 'has .differences props')
+    t.equals(err.code, 'ECHANGES', 'image changes detected')
+    t.ok(Array.isArray(err.errors[0].differences), 'has .differences props')
   })
   .then(() => fs.removeAsync(diffDir))
   .then(() => t.pass('teardown'))
@@ -91,7 +93,7 @@ tape('case-missing-run-img', t => {
 })
 
 tape('case-new-images', t => {
-  t.plan(4)
+  t.plan(5)
   var testRoot = path.resolve(__dirname, 'case-new-images')
   var refDir = path.join(testRoot, 'ref')
   var runDir = path.join(testRoot, 'run')
@@ -104,7 +106,8 @@ tape('case-new-images', t => {
   })
   .then(() => ImageSetDiffer.factory({ refDir, runDir, allowNewImages: false }).run())
   .catch(err => {
-    t.equals(err.code, 'ENEWIMAGESFORBIDDEN', 'new images forbidden')
+    t.equals(err.code, 'ECHANGES', 'changes detected/forbidden')
+    t.equals(err.errors[0].code, 'ENEWIMAGESFORBIDDEN', 'new images forbidden')
   })
   .then(() => ImageSetDiffer.factory({ refDir, runDir, allowNewImages: true }).run())
   .then(() => fs.readdirAsync(refDir))
@@ -145,4 +148,22 @@ tape('case-approve-changes', t => {
   .then(() => fs.removeAsync(diffDir))
   .then(() => t.pass('teardown'))
   .then(t.end, t.end)
+})
+
+tape('case-changes-and-new-images', async t => {
+  t.plan(5)
+  var testRoot = path.resolve(__dirname, 'case-changes-and-new-images')
+  var refDir = path.join(testRoot, 'ref')
+  var runDir = path.join(testRoot, 'run')
+  var diffDir = `${runDir}-diff`
+  return ImageSetDiffer.factory({ refDir, runDir }).run()
+  .catch(err => {
+    t.equals(err.code, 'ECHANGES', 'missing images detected')
+    t.equals(err.errors.length, 2, 'multiple errors detected')
+    t.equals(err.errors[0].code, 'ENEWIMAGESFORBIDDEN')
+    t.equals(err.errors[1].code, 'EIMAGEDIFFS')
+  })
+  .then(() => fs.removeAsync(diffDir))
+  .then(() => t.pass('teardown'))
+  .catch(t.end)
 })

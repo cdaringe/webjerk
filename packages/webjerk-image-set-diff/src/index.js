@@ -18,6 +18,7 @@ var debug = require('debug')('webjerk:image-set-diff')
  * @param {string} conf.runDir folder of test run images. relative or absolute
  * @param {boolean} [conf.allowNewImages] allows new images to enter into the reference set. defaults to true
  * @param {boolean} [conf.approveChanges] updates ref images to match run images
+ * @param {boolean} [conf.report] generate diff report into diff dir
  */
 function ImageSetDiffer (conf) {
   if (!conf) throw new Error('missing config')
@@ -139,9 +140,12 @@ Object.assign(ImageSetDiffer.prototype, {
     this._refBasenames = ref.filter(f => f.match(/\.png$/))
     this._runBasenames = run.filter(f => f.match(/\.png$/))
   },
-  report (differences) {
+  async report (differences) {
     if (!Array.isArray(differences)) throw new Error('missing array of differences')
-    if (!this.conf.report) return Promise.resolve()
+    if (!this.conf.report) {
+      debug(`reporting disabled, skipping report for ${differences.length} differences`)
+      return
+    }
     var enriched = differences.map(diff => Object.assign({}, diff, {
       name: diff.basename,
       aFilename: path.join(this.conf.refDir, diff.basename),

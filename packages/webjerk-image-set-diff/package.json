@@ -1,7 +1,7 @@
 {
   "name": "webjerk-image-set-diff",
   "description": "compares sets of images, and optionally generates pretty reports on pixel-perfect-mismatch",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "main": "src/index.js",
   "repository": {
     "url": "https://github.com/cdaringe/webjerk"

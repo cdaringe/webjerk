@@ -3,9 +3,6 @@
   "version": "0.2.18",
   "description": "generates a static website displaying sets of image differences",
   "main": "index.js",
-  "repository": {
-    "url": "https://github.com/cdaringe/webjerk"
-  },
   "author": "cdaringe <cdaringe@gmail.com>",
   "license": "MIT",
   "dependencies": {
@@ -22,9 +19,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "ava test/*.test.js"
+    "test": "DEBUG=webjerk* ava test/*.test.js"
   },
-  "homepage": "",
   "devDependencies": {
     "ava": "^0.23.0"
   }

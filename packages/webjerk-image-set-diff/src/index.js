@@ -76,7 +76,7 @@ Object.assign(ImageSetDiffer.prototype, {
     var errors = res.filter(r => r instanceof Error)
     if (errors.length) {
       var err = new Error('image differences detected')
-      err.code = 'EIMAGEDIFFS'
+      err.code = 'EWEBJERKIMAGEDIFFS'
       err.differences = errors.map(({ basename, blinkDiff, message }) =>
         ({ basename, blinkDiff, message }))
       throw err
@@ -103,7 +103,7 @@ Object.assign(ImageSetDiffer.prototype, {
         newImages.map(img => `\t${img}\n`),
         'use `allowNewImages` or WEBJERK_ALLOW_NEW_IMAGES to enable'
       ].join('\n'))
-      err.code = 'ENEWIMAGESFORBIDDEN'
+      err.code = 'EWEBJERKNEWIMAGESFORBIDDEN'
       throw err
     }
     await Promise.all(newImages.map(tBasname => {
@@ -161,29 +161,29 @@ Object.assign(ImageSetDiffer.prototype, {
     try {
       await this.validateImagePartitions(partitions)
     } catch (err) {
-      if (err.code === 'EMISSINGIMAGES') toThrow.push(err)
+      if (err.code === 'EWEBJERKMISSINGIMAGES') toThrow.push(err)
       else throw err
     }
     const didUpsertNewImages = await this.upsertReferenceImages()
     try {
       await this.handleNewImages({ allowNewImages: didUpsertNewImages })
     } catch (err) {
-      if (err.code === 'ENEWIMAGESFORBIDDEN') toThrow.push(err)
+      if (err.code === 'EWEBJERKNEWIMAGESFORBIDDEN') toThrow.push(err)
       else throw err
     }
     await this.maybeApproveChanges()
     try {
       await this.compare()
     } catch (err) {
-      if (err.code === 'EIMAGEDIFFS') {
-        debug('EIMAGEDIFFS', err.differences)
+      if (err.code === 'EWEBJERKIMAGEDIFFS') {
+        debug('EWEBJERKIMAGEDIFFS', err.differences)
         await this.report(err.differences)
       }
       toThrow.push(err)
     }
     if (toThrow.length) {
       let err = new Error('image set changes detected')
-      err.code = 'ECHANGES'
+      err.code = 'EWEBJERKCHANGES'
       err.errors = toThrow
       throw err
     }
@@ -209,7 +209,7 @@ Object.assign(ImageSetDiffer.prototype, {
         `missing images:\n\t${missingImages.join('\n\t')}`,
         'if these images are no longer required, please remove them from the reference set.'
       ].join('\n'))
-      err.code = 'EMISSINGIMAGES'
+      err.code = 'EWEBJERKMISSINGIMAGES'
       throw err
     }
   }

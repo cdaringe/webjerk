@@ -13,10 +13,13 @@ module.exports = {
     }, [])
     if (!errs.length) return
     if (errs.length > 1) console.error(`webjerk failed with ${errs.length} errors`)
-    errs.forEach((err, i) => (err.message = `[${i}] ${err.message}`))
-    errs.forEach((err, ndx) => { if (ndx) console.error(err) })
+    errs.forEach((err, i) => {
+      console.error(`[${i}] ${err.code || ''} ${err.message}`)
+      // if we didn't emit a user friendly EWEBJERK* error, be loud
+      if (!err.code || !err.code.match(/EWEBJERK/)) console.error(err)
+    })
     let err = new Error('webjerk pipeline failure. see `.errors`')
-    err.code = 'EJERK'
+    err.code = 'EWEBJERK'
     err.errors = errs
     throw err
   },

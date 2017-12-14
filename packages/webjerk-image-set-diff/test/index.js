@@ -69,7 +69,7 @@ tape('case-unhappy-matches', t => {
   return Promise.resolve()
   .then(() => idr.run())
   .catch(err => {
-    t.equals(err.code, 'ECHANGES', 'image changes detected')
+    t.equals(err.code, 'EWEBJERKCHANGES', 'image changes detected')
     t.ok(Array.isArray(err.errors[0].differences), 'has .differences props')
   })
   .then(() => fs.removeAsync(diffDir))
@@ -85,7 +85,7 @@ tape('case-missing-run-img', t => {
   var diffDir = `${runDir}-diff`
   return ImageSetDiffer.factory({ refDir, runDir }).run()
   .catch(err => {
-    t.equals(err.errors[0].code, 'EMISSINGIMAGES', 'missing images detected')
+    t.equals(err.errors[0].code, 'EWEBJERKMISSINGIMAGES', 'missing images detected')
   })
   .then(() => fs.removeAsync(diffDir))
   .then(() => t.pass('teardown'))
@@ -106,8 +106,8 @@ tape('case-new-images', t => {
   })
   .then(() => ImageSetDiffer.factory({ refDir, runDir, allowNewImages: false }).run())
   .catch(err => {
-    t.equals(err.code, 'ECHANGES', 'changes detected/forbidden')
-    t.equals(err.errors[0].code, 'ENEWIMAGESFORBIDDEN', 'new images forbidden')
+    t.equals(err.code, 'EWEBJERKCHANGES', 'changes detected/forbidden')
+    t.equals(err.errors[0].code, 'EWEBJERKNEWIMAGESFORBIDDEN', 'new images forbidden')
   })
   .then(() => ImageSetDiffer.factory({ refDir, runDir, allowNewImages: true }).run())
   .then(() => fs.readdirAsync(refDir))
@@ -158,10 +158,10 @@ tape('case-changes-and-new-images', async t => {
   var diffDir = `${runDir}-diff`
   return ImageSetDiffer.factory({ refDir, runDir }).run()
   .catch(err => {
-    t.equals(err.code, 'ECHANGES', 'missing images detected')
+    t.equals(err.code, 'EWEBJERKCHANGES', 'missing images detected')
     t.equals(err.errors.length, 2, 'multiple errors detected')
-    t.equals(err.errors[0].code, 'ENEWIMAGESFORBIDDEN')
-    t.equals(err.errors[1].code, 'EIMAGEDIFFS')
+    t.equals(err.errors[0].code, 'EWEBJERKNEWIMAGESFORBIDDEN')
+    t.equals(err.errors[1].code, 'EWEBJERKIMAGEDIFFS')
   })
   .then(() => fs.removeAsync(diffDir))
   .then(() => t.pass('teardown'))

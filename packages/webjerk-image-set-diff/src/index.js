@@ -158,7 +158,12 @@ Object.assign(ImageSetDiffer.prototype, {
     debug('running image diff algorithm')
     await this.readTestState()
     const partitions = await this._partitionImageBasenames()
-    await this.validateImagePartitions(partitions)
+    try {
+      await this.validateImagePartitions(partitions)
+    } catch (err) {
+      if (err.code === 'EMISSINGIMAGES') toThrow.push(err)
+      else throw err
+    }
     const didUpsertNewImages = await this.upsertReferenceImages()
     try {
       await this.handleNewImages({ allowNewImages: didUpsertNewImages })

@@ -6,12 +6,19 @@ var debug = require('debug')('webjerk:index')
 
 module.exports = {
   async exit (errs) {
-    errs = errs || []
+    errs = (errs || []).reduce((all, err) => {
+      return (err.errors && err.errors.length)
+        ? all.concat([err]).concat(err.errors)
+        : all.concat([err])
+    }, [])
     if (!errs.length) return
     if (errs.length > 1) console.error(`webjerk failed with ${errs.length} errors`)
     errs.forEach((err, i) => (err.message = `[${i}] ${err.message}`))
     errs.forEach((err, ndx) => { if (ndx) console.error(err) })
-    throw errs[0]
+    let err = new Error('webjerk pipeline failure. see `.errors`')
+    err.code = 'EJERK'
+    err.errors = errs
+    throw err
   },
 
   async run (config) {

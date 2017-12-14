@@ -15,7 +15,7 @@ module.exports = async function webjerkImageSetDiffReporter ({ differences, dest
     fs.remove(buildDir),
     fs.remove(dest)
   ])
-  var env = Object.assign(process.env, { REACT_APP_DIFFS: diffBasename })
+  var env = Object.assign({ REACT_APP_DIFFS: diffBasename, NODE_ENV: 'production' })
   debug('running react-scripts build')
   await execa('npm', ['run', 'build'], { cwd: __dirname, env, stdio: 'inherit' })
   await fs.move(path.join(__dirname, 'build'), dest)

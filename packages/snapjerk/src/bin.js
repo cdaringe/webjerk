@@ -63,4 +63,12 @@ if (snapDefinitions) {
 }
 debug('snapjerk final config:', conf)
 
-snapjerk(conf)
+async function run () {
+  try {
+    await snapjerk(conf)
+  } catch (err) {
+    if (err.code === 'EJERK') process.exit(1) // silence!
+    throw err
+  }
+}
+run()

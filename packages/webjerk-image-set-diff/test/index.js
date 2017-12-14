@@ -85,7 +85,7 @@ tape('case-missing-run-img', t => {
   var diffDir = `${runDir}-diff`
   return ImageSetDiffer.factory({ refDir, runDir }).run()
   .catch(err => {
-    t.equals(err.code, 'EMISSINGIMAGES', 'missing images detected')
+    t.equals(err.errors[0].code, 'EMISSINGIMAGES', 'missing images detected')
   })
   .then(() => fs.removeAsync(diffDir))
   .then(() => t.pass('teardown'))

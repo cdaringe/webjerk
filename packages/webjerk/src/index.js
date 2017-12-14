@@ -12,7 +12,6 @@ module.exports = {
         : all.concat([err])
     }, [])
     if (!errs.length) return
-    if (errs.length > 1) console.error(`webjerk failed with ${errs.length} errors`)
     errs.forEach((err, i) => {
       console.error(`[${i}] ${err.code || ''} ${err.message}`)
       // if we didn't emit a user friendly EWEBJERK* error, be loud

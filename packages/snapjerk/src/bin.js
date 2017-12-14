@@ -67,7 +67,7 @@ async function run () {
   try {
     await snapjerk(conf)
   } catch (err) {
-    if (err.code === 'EWEBJERK') process.exit(1) // silence!
+    if (err.code && err.code.match(/WEBJERK/)) process.exit(1) // silence!
     throw err
   }
 }

@@ -24,8 +24,6 @@
   },
   "scripts": {
     "docs:build": "jsdock build",
-    "docs:publish": "jsdock publish",
-    "postpublish": "npm run docs-publish",
     "test": "DEBUG=webjerk* ava --verbose test/*.test.js"
   }
 }

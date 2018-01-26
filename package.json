@@ -7,7 +7,7 @@
   "author": "cdaringe",
   "license": "MIT",
   "devDependencies": {
-    "ava": "^0.24.0",
+    "ava": "^0.25.0",
     "bluebird": "^3.5.1",
     "execa": "^0.8.0",
     "fs-extra": "^5.0.0",

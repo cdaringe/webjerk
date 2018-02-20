@@ -1,6 +1,6 @@
 {
   "name": "webjerk-image-set-diff-reporter",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "description": "generates a static website displaying sets of image differences",
   "main": "index.js",
   "author": "cdaringe <cdaringe@gmail.com>",

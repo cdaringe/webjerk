@@ -13,6 +13,7 @@ ava.test.beforeEach(async function (params) {
 
 ava.test.afterEach(async function (params) {
   if (!process.env.DEBUG) await fs.remove(dest)
+  else console.warn(`skipping cleanup. DEBUG set: ${process.env.DEBUG}`)
 })
 
 ava('reporter', async t => {

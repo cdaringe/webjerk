@@ -23,6 +23,7 @@
     "clean": "for i in $(ls packages/); do rm -rf packages/$i/node_modules packages/$i/package-lock.json packages/$i/yarn.lock; done;",
     "lint": "standard 'packages/**/*.js'",
     "postinstall": "lerna bootstrap",
+    "prepublish:lerna": "cp README.md packages/webjerk/README.md",
     "publish:lerna": "lerna publish",
     "publish:retry": "node scripts/publish",
     "test": "lerna run test --stream --parallel",

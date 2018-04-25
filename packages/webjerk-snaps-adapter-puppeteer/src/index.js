@@ -82,7 +82,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
     var puppeteerEntryBundle = path.join('/app/snapjerk', entryFilename)
     debug(`instructing puppeteer to load 'node ${puppeteerEntryBundle}' on boot`)
     var puppeteerServer = await docker.createContainer({
-      Image: 'zenato/puppeteer-renderer',
+      Image: 'cdaringe/puppeteer-renderer',
       Cmd: ['node', puppeteerEntryBundle],
       AttachStderr: true,
       AttachStdout: true,

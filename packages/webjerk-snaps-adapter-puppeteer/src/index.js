@@ -3,6 +3,7 @@
 var debug = require('debug')('webjerk:snaps-adapter-puppeteer')
 var WebjerkSnapsAdapter = require('webjerk-snaps-adapter')
 var path = require('path')
+var PUPPETEER_IMAGE = 'cdaringe/puppeteer-renderer:0.3.0'
 
 class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
   constructor (conf) {
@@ -14,7 +15,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
         browserName: 'chrome',
         dockerImageNames: [
           'cdaringe/httpster',
-          'zenato/puppeteer-renderer'
+          PUPPETEER_IMAGE
         ]
       }
     ))
@@ -82,7 +83,7 @@ class WebjerkSnapsAdapterPuppeteer extends WebjerkSnapsAdapter {
     var puppeteerEntryBundle = path.join('/app/snapjerk', entryFilename)
     debug(`instructing puppeteer to load 'node ${puppeteerEntryBundle}' on boot`)
     var puppeteerServer = await docker.createContainer({
-      Image: 'cdaringe/puppeteer-renderer',
+      Image: PUPPETEER_IMAGE,
       Cmd: ['node', puppeteerEntryBundle],
       AttachStderr: true,
       AttachStdout: true,

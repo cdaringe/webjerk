@@ -1,6 +1,6 @@
 {
   "name": "webjerk-process-wrangler",
-  "version": "0.2.9",
+  "version": "0.2.22",
   "description": "add webjerk hooks to launch & teardown a process",
   "main": "src/index.js",
   "repository": {

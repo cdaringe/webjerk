@@ -94,9 +94,10 @@ class WebjerkSnapsAdapter {
     }
   }
   async getEntry ({ entry, root }) {
-    debug('bunding webjerk-snaps-adapter code for injection into docker container')
-    await util.promisify(webpack.bind(webpack))({
+    debug('bundling webjerk-snaps-adapter code for injection into docker container')
+    await util.promisify(webpack)({
       target: 'node',
+      mode: process.env.NODE_ENV || 'production',
       externals: [
         function (context, request, cb) {
           return (/^puppeteer$/.test(request))
@@ -108,17 +109,11 @@ class WebjerkSnapsAdapter {
       output: {
         path: root,
         filename: 'entry.js'
-      },
-      module: {
-        rules: [{
-          test: /\.(js|jsx|mjs)$/,
-          loader: require.resolve('shebang-loader')
-        }]
       }
     })
     var entryFilename = path.join(root, 'entry.js')
     if (!(await fs.exists(entryFilename))) {
-      throw new Error('entry.js not written')
+      throw new Error(`${entryFilename} not written`)
     }
     debug(`docker entry bundle written to host: ${entryFilename}`)
     return entryFilename

@@ -52,5 +52,9 @@
       "golden-site",
       "build"
     ]
+  },
+  "ava": {
+    "babel": false,
+    "compileEnhancements": false
   }
 }

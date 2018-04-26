@@ -14,7 +14,7 @@
       "type": "node",
       "request": "launch",
       "name": "test - snapjerk",
-      "program": "${workspaceRoot}/node_modules/ava/profile.js",
+      "program": "${workspaceRoot}/packages/snapjerk/node_modules/ava/profile.js",
       "args": [
         "${workspaceRoot}/packages/snapjerk/test/index.test.js"
       ],

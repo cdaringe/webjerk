@@ -1,6 +1,6 @@
 {
   "name": "snapjerk",
-  "version": "0.2.22",
+  "version": "0.3.0",
   "description": "web application screenshot testing in docker",
   "main": "src/index.js",
   "bin": "src/bin.js",
@@ -12,8 +12,8 @@
     "fs-extra": "^4.0.2",
     "meow": "^3.7.0",
     "perish": "^1.0.1",
-    "webjerk": "^0.2.22",
-    "webjerk-snaps": "^0.2.22"
+    "webjerk": "^0.3.0",
+    "webjerk-snaps": "^0.3.0"
   },
   "repository": {
     "type": "git",

@@ -127,7 +127,13 @@ Object.assign(ImageSetDiffer.prototype, {
     var newImages = without.apply(null, [runBasenames].concat(refBasenames))
     var imagePartitions = { existingImages: refBasenames, missingImages, toCompare, newImages }
     Object.assign(this, { _imagePartitions: imagePartitions })
-    debug('imagePartitions', imagePartitions)
+    var partitionCounts = {}
+    for (var key in imagePartitions) {
+      if (Number.isInteger(imagePartitions[key].length)) {
+        partitionCounts[key] = imagePartitions[key].length
+      }
+    }
+    debug('imagePartitions', partitionCounts)
     return imagePartitions
   },
   async readTestState () {
@@ -135,8 +141,8 @@ Object.assign(ImageSetDiffer.prototype, {
       this.conf.refDir,
       this.conf.runDir
     ].map(f => fs.readdir(f)))
-    debug('test state - ref images found:', ref)
-    debug('test state - run images found:', run)
+    debug('test state - ref images found:', ref.length)
+    debug('test state - run images found:', run.length)
     this._refBasenames = ref.filter(f => f.match(/\.png$/))
     this._runBasenames = run.filter(f => f.match(/\.png$/))
   },

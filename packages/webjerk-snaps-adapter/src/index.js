@@ -93,11 +93,11 @@ class WebjerkSnapsAdapter {
       await network.remove()
     }
   }
-  async getEntry ({ entry, root }) {
+  async getEntry ({ entry, root, outputBasename = 'entry.js' }) {
     debug('bundling webjerk-snaps-adapter code for injection into docker container')
     await util.promisify(webpack)({
       target: 'node',
-      mode: process.env.NODE_ENV || 'production',
+      mode: 'development',
       externals: [
         function (context, request, cb) {
           return (/^puppeteer$/.test(request))
@@ -108,10 +108,10 @@ class WebjerkSnapsAdapter {
       entry,
       output: {
         path: root,
-        filename: 'entry.js'
+        filename: outputBasename
       }
     })
-    var entryFilename = path.join(root, 'entry.js')
+    var entryFilename = path.join(root, outputBasename)
     if (!(await fs.exists(entryFilename))) {
       throw new Error(`${entryFilename} not written`)
     }

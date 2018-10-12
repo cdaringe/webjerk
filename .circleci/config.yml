@@ -54,6 +54,5 @@ jobs:
 
       # run tests!
       - run: docker network prune --force
-      - run: nvm use node && npm run lint
       - run: nvm use node && DEBUG=webjerk* npm test -- --verbose
 

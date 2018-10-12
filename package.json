@@ -11,24 +11,21 @@
     "bluebird": "^3.5.1",
     "execa": "^0.10.0",
     "fs-extra": "^5.0.0",
-    "husky": "^0.14.3",
+    "husky": "^1.1.2",
     "lerna": "3.0.0-alpha.0",
     "lint-staged": "^7.0.0",
     "npm-run-all": "^4.1.2",
     "perish": "^1.0.1",
-    "prettier-standard": "^8.0.0",
-    "standard": "^11.0.1"
+    "prettier-standard": "^8.0.1"
   },
   "scripts": {
     "clean": "for i in $(ls packages/); do rm -rf packages/$i/node_modules packages/$i/package-lock.json packages/$i/yarn.lock; done;",
-    "lint": "standard 'packages/**/*.js'",
     "postinstall": "lerna bootstrap",
     "prepublish:lerna": "cp README.md packages/webjerk/README.md",
     "publish:lerna": "lerna publish",
     "publish:retry": "node scripts/publish",
     "test": "lerna run test --stream --parallel",
-    "docs": "node scripts/docs",
-    "precommit": "run-p lint test"
+    "docs": "node scripts/docs"
   },
   "dependencies": {
     "gh-pages": "^1.0.0",
@@ -52,5 +49,10 @@
       "golden-site",
       "build"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "run-p test"
+    }
   }
 }

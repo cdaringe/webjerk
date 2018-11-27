@@ -13,7 +13,7 @@
     "fs-extra": "^5.0.0",
     "husky": "^1.1.2",
     "husky": "^0.14.3",
-    "lerna": "3.0.0-alpha.0",
+    "lerna": "3.5.0",
     "lint-staged": "^7.0.0",
     "npm-run-all": "^4.1.2",
     "perish": "^1.0.1",

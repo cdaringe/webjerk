@@ -18,7 +18,7 @@
     "npm-run-all": "^4.1.2",
     "perish": "^1.0.1",
     "prettier-standard": "^8.0.1",
-    "standard": "^11.0.1"
+    "standard": "^13.0.1"
   },
   "scripts": {
     "clean": "for i in $(ls packages/); do rm -rf packages/$i/node_modules packages/$i/package-lock.json packages/$i/yarn.lock; done;",

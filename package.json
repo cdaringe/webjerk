@@ -7,26 +7,30 @@
   "author": "cdaringe",
   "license": "MIT",
   "devDependencies": {
-    "ava": "^0.25.0",
+    "ava": "^2.4.0",
     "bluebird": "^3.5.1",
     "execa": "^2.0.4",
     "fs-extra": "^5.0.0",
-    "husky": "^1.1.2",
+    "husky": "^3.0.5",
     "lerna": "^3.16.4",
     "lint-staged": "^9.2.5",
     "npm-run-all": "^4.1.5",
     "perish": "^1.0.2",
     "prettier-standard": "^14.0.5",
-    "standard": "14.3.1"
+    "standard": "^14.3.1"
   },
   "scripts": {
     "clean": "for i in $(ls packages/); do rm -rf packages/$i/node_modules packages/$i/package-lock.json packages/$i/yarn.lock; done;",
+    "lint-staged": "lint-staged",
     "postinstall": "lerna bootstrap",
+    "precommit": "run-p lint-staged test",
     "prepublish:lerna": "cp README.md packages/webjerk/README.md",
     "publish:lerna": "lerna publish",
     "publish:retry": "node scripts/publish",
     "test": "lerna run test --stream --parallel",
-    "docs": "node scripts/docs"
+    "docs": "node scripts/docs",
+    "format": "prettier-standard '{src,test,scripts}/**/*.{js,jsx,ts,tsx}'",
+    "lint": "standard '{src,test,scripts}/**/*.{js,jsx,ts,tsx}' --fix"
   },
   "dependencies": {
     "gh-pages": "^1.0.0",
@@ -37,14 +41,6 @@
     "minami": "^1.2.3",
     "swig-templates": "^2.0.2"
   },
-  "lint-staged": {
-    "linters": {
-      "src/**/*.js": [
-        "prettier-standard",
-        "git add"
-      ]
-    }
-  },
   "standard": {
     "ignore": [
       "golden-site",
@@ -53,7 +49,14 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "run-p test"
+      "pre-commit": "npm run precommit"
     }
+  },
+  "lint-staged": {
+    "{src,test,scripts}/**/*.{js,jsx,ts,tsx}": [
+      "npm run format",
+      "npm run lint",
+      "git add"
+    ]
   }
 }

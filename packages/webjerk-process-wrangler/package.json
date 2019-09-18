@@ -9,7 +9,7 @@
   "author": "cdaringe <cdaringe@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "echo 'huuh? tests? HOW FUNNY! BAAAAAAHHHAHA HAHA HA LOLZ ROFLCOPTERS ETC'"
+    "test": "echo skipping"
   },
   "dependencies": {
     "bluebird": "^3.5.1",

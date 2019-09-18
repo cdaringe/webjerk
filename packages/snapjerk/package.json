@@ -24,6 +24,12 @@
   },
   "scripts": {
     "docs:build": "jsdock build",
-    "test": "DEBUG=webjerk* ava --verbose test/*.test.js"
+    "test": "DEBUG=webjerk* ava"
+  },
+  "ava": {
+    "verbose": true,
+    "files": [
+      "test/**/*.test.js"
+    ]
   }
 }

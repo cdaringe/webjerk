@@ -19,8 +19,14 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "ava test/*.test.js",
-    "test:debug": "DEBUG=webjerk* ava test/*.test.js"
+    "test": "ava",
+    "test:debug": "DEBUG=webjerk* ava"
+  },
+  "ava": {
+    "verbose": true,
+    "files": [
+      "test/**/*.test.js"
+    ]
   },
   "devDependencies": {
     "ava": "^0.23.0"

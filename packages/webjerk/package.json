@@ -14,7 +14,13 @@
     "lodash": "^4.17.4"
   },
   "scripts": {
-    "test": "ava test/*.test.js"
+    "test": "ava"
+  },
+  "ava": {
+    "verbose": true,
+    "files": [
+      "test/**/*.test.js"
+    ]
   },
   "repository": {
     "type": "git",

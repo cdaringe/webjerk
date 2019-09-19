@@ -20,7 +20,7 @@
     "url": "https://github.com/cdaringe/webjerk"
   },
   "devDependencies": {
-    "ava": "^0.23.0"
+    "ava": "0.23.0"
   },
   "scripts": {
     "docs:build": "jsdock build",

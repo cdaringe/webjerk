@@ -7,7 +7,7 @@
   "author": "cdaringe",
   "license": "MIT",
   "dependencies": {
-    "debug": "^3.1.0",
+    "debug": "^4.0.0",
     "freeport": "^1.0.5",
     "fs-extra": "^4.0.2",
     "meow": "^3.7.0",

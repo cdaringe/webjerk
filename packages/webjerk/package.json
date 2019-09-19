@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "license": "MIT",
   "devDependencies": {
-    "ava": "^0.23.0",
-    "perish": "^1.0.1"
+    "ava": "0.23.0",
+    "perish": "1.0.1"
   },
   "dependencies": {
     "bluebird": "^3.5.1",

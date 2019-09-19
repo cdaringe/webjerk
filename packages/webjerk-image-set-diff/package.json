@@ -17,7 +17,7 @@
     "webjerk-image-set-diff-reporter": "^0.3.0"
   },
   "devDependencies": {
-    "perish": "1.0.1",
+    "perish": "1.0.2",
     "tape": "4.11.0"
   },
   "scripts": {

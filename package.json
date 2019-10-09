@@ -9,7 +9,7 @@
   "devDependencies": {
     "ava": "2.4.0",
     "bluebird": "3.7.0",
-    "execa": "2.0.4",
+    "execa": "2.1.0",
     "fs-extra": "5.0.0",
     "husky": "3.0.8",
     "lerna": "3.16.5",

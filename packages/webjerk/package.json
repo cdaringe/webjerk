@@ -6,7 +6,7 @@
   "license": "MIT",
   "devDependencies": {
     "ava": "0.23.0",
-    "perish": "1.0.2"
+    "perish": "1.0.3"
   },
   "dependencies": {
     "bluebird": "^3.5.1",

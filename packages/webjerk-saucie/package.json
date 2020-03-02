@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "perish": "1.0.3",
-    "tape": "4.13.0"
+    "tape": "4.13.2"
   },
   "scripts": {
     "test": "node test/"

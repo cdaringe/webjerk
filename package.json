@@ -33,7 +33,7 @@
     "lint": "standard '{src,test,scripts}/**/*.{js,jsx,ts,tsx}' --fix"
   },
   "dependencies": {
-    "gh-pages": "^1.0.0",
+    "gh-pages": "^3.0.0",
     "github-markdown-css": "^4.0.0",
     "jsdoc": "^3.5.5",
     "lodash": "^4.17.4",

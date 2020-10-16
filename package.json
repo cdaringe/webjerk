@@ -13,7 +13,7 @@
     "fs-extra": "5.0.0",
     "husky": "4.3.0",
     "lerna": "3.22.1",
-    "lint-staged": "10.4.0",
+    "lint-staged": "10.4.1",
     "npm-run-all": "4.1.5",
     "perish": "1.0.3",
     "prettier-standard": "16.4.1",

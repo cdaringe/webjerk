@@ -10,7 +10,7 @@
     "debug": "^3.1.0",
     "freeport": "^1.0.5",
     "fs-extra": "^4.0.2",
-    "meow": "^7.0.0",
+    "meow": "^8.0.0",
     "perish": "^1.0.1",
     "webjerk": "^0.3.0",
     "webjerk-snaps": "^0.3.0"

@@ -6,7 +6,7 @@
   "license": "MIT",
   "author": "cdaringe",
   "dependencies": {
-    "httpster": "^1.0.3",
+    "httpster": "^1.2.0",
     "webjerk-snaps-adapter": "^0.3.0"
   },
   "repository": {

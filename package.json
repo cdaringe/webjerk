@@ -35,7 +35,7 @@
   "dependencies": {
     "gh-pages": "^3.0.0",
     "github-markdown-css": "^4.0.0",
-    "jsdoc": "^3.5.5",
+    "jsdoc": "^3.6.3",
     "lodash": "^4.17.4",
     "marked": "^2.0.0",
     "minami": "^1.2.3",

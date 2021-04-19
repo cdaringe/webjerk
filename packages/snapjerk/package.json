@@ -9,7 +9,7 @@
   "dependencies": {
     "debug": "^3.1.0",
     "freeport": "^1.0.5",
-    "fs-extra": "^4.0.2",
+    "fs-extra": "^9.0.0",
     "meow": "^9.0.0",
     "perish": "^1.0.1",
     "webjerk": "^0.3.0",

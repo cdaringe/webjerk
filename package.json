@@ -10,7 +10,7 @@
     "ava": "2.4.0",
     "bluebird": "3.7.2",
     "execa": "2.1.0",
-    "fs-extra": "5.0.0",
+    "fs-extra": "10.0.0",
     "husky": "7.0.1",
     "lerna": "4.0.0",
     "lint-staged": "11.0.1",

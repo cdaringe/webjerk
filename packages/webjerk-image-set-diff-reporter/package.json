@@ -6,7 +6,7 @@
   "author": "cdaringe <cdaringe@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.24.0",
+    "axios": "^0.27.0",
     "bluebird": "^3.5.1",
     "cdaringe-react-image-diff": "^0.2.0",
     "debug": "^3.1.0",

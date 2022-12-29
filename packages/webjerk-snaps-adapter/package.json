@@ -16,7 +16,7 @@
     "perish": "^1.0.1",
     "serialize-javascript": "^6.0.0",
     "shebang-loader": "0.0.1",
-    "webpack": "^4.0.0"
+    "webpack": "^5.75.0"
   },
   "repository": {
     "type": "git",

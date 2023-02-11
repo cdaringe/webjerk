@@ -29,6 +29,6 @@
     ]
   },
   "devDependencies": {
-    "ava": "0.23.0"
+    "ava": "5.2.0"
   }
 }
